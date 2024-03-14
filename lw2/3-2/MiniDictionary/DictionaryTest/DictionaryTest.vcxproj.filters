@@ -30,5 +30,6 @@
   <ItemGroup>
     <Text Include="Dictionary.txt" />
     <Text Include="Empty.txt" />
+    <Text Include="NewDictionary.txt" />
   </ItemGroup>
 </Project>

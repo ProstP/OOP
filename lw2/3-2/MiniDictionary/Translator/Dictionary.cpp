@@ -39,11 +39,6 @@ Dictionary LoadDictionaryFromFile(const std::string& fileName)
 
 std::optional<std::string> TranslateWord(const Dictionary& dictionary, const std::string& word)
 {
-	if (word.empty())
-	{
-		return "";
-	}
-
 	if (!dictionary.contains(word))
 	{
 		return std::nullopt;
@@ -54,12 +49,7 @@ std::optional<std::string> TranslateWord(const Dictionary& dictionary, const std
 
 void SaveWordToDictionary(Dictionary& dictionary, const std::string& word, const std::string& translate)
 {
-	if (word.empty() || translate.empty())
-	{
-		throw std::runtime_error("Can not save empty word or translate");
-	}
-
-	if (dictionary.contains(word))
+	if (dictionary.contains(word) || word.empty() || translate.empty())
 	{
 		return;
 	}

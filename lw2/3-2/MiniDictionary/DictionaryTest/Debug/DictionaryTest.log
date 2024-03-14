@@ -1,7 +1,5 @@
-﻿  Dictionary.cpp
-  DictionaryTest.cpp
-  Создание кода...
+﻿  DictionaryTest.cpp
   DictionaryTest.vcxproj -> E:\OOP\lw2\3-2\MiniDictionary\Debug\DictionaryTest.exe
   ===============================================================================
-  All tests passed (5 assertions in 3 test cases)
+  All tests passed (12 assertions in 4 test cases)
   
