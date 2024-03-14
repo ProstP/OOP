@@ -1,3 +1,7 @@
+The Red Square
+Красная Площадь
+car
+Машина
 cat
 Кошка
 dog

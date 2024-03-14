@@ -4,6 +4,11 @@
 
 Dictionary LoadDictionaryFromFile(const std::string& fileName)
 {
+	if (fileName.empty())
+	{
+		throw std::runtime_error("Filename can not be empty");
+	}
+
 	std::ifstream file(fileName);
 
 	if (!file.is_open())
@@ -34,6 +39,11 @@ Dictionary LoadDictionaryFromFile(const std::string& fileName)
 
 std::optional<std::string> TranslateWord(const Dictionary& dictionary, const std::string& word)
 {
+	if (word.empty())
+	{
+		return "";
+	}
+
 	if (!dictionary.contains(word))
 	{
 		return std::nullopt;
@@ -44,6 +54,11 @@ std::optional<std::string> TranslateWord(const Dictionary& dictionary, const std
 
 void SaveWordToDictionary(Dictionary& dictionary, const std::string& word, const std::string& translate)
 {
+	if (word.empty() || translate.empty())
+	{
+		throw std::runtime_error("Can not save empty word or translate");
+	}
+
 	if (dictionary.contains(word))
 	{
 		return;
@@ -54,11 +69,17 @@ void SaveWordToDictionary(Dictionary& dictionary, const std::string& word, const
 
 void SaveDictionaryToFile(const Dictionary& dictionary, const std::string& fileName)
 {
+	if (fileName.empty())
+	{
+		throw std::runtime_error("File name can not be empty");
+	}
+
 	std::ofstream file(fileName);
 
 	for (const auto& [word, translate] : dictionary)
 	{
-		file << word << "\n" << translate << "\n";
+		file << word << "\n"
+			 << translate << "\n";
 	}
 
 	if (!file.flush())
