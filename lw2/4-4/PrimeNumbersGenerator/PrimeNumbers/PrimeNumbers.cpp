@@ -1,8 +1,8 @@
-﻿#include <iostream>
-#include <iterator>
-#include "GeneratePrimeNumbers.h"
-#include <string>
+﻿#include "GeneratePrimeNumbers.h"
 #include <ctime>
+#include <iostream>
+#include <iterator>
+#include <string>
 
 struct Args
 {
@@ -27,7 +27,6 @@ int main(int argc, char* argv[])
 		Args args = ParseArgs(argc, argv);
 		std::set<int> primeNums = GeneratePrimeNumbersSet(args.upperBound);
 		std::cout << primeNums.size() << "\n";
-		//std::copy(primeNums.begin(), primeNums.end(), std::ostream_iterator<int>(std::cout, " "));
 		std::cout << (clock() - start) / (float)CLOCKS_PER_SEC << "\n";
 	}
 	catch (const std::exception& e)

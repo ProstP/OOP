@@ -1,7 +1,7 @@
 #include "GeneratePrimeNumbers.h"
+#include <ctime>
 #include <iostream>
 #include <vector>
-#include <ctime>
 
 void CrossOutEvenNumbers(std::vector<bool>& numbers, int upperBound)
 {
