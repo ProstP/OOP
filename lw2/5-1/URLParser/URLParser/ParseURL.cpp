@@ -18,7 +18,7 @@ const std::map<Protocol, int> DEFAULT_PORT
 
 bool CheckUrl(const std::string& url)
 {
-	const std::regex pattern("^([hH][tT][tT][pP][sS]?|[fF][tT][pP])://[\\w-.,]+(:\\d{1,5})?(/[\\w-.,/]+)?/?$");
+	const std::regex pattern("^([hH][tT][tT][pP][sS]?|[fF][tT][pP])://[\\w-.,]+(:\\d{1,5})?(/.+)?/?$");
 
 	if (!std::regex_match(url, pattern))
 	{
@@ -74,7 +74,7 @@ std::string GetHost(const std::string& url)
 
 std::string GetDocument(const std::string& url)
 {
-	const std::regex documentPattern("[\\w-.,]/[\\w-.,/]+");
+	const std::regex documentPattern("[\\w-.,]/.+");
 	std::smatch documentMatch;
 	if (!std::regex_search(url, documentMatch, documentPattern))
 	{
