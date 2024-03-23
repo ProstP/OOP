@@ -14,7 +14,7 @@ SCENARIO("Parse url")
 	{
 		THEN("False")
 		{
-			CHECK(!ParseURL("fsfsd", dummyProtocol, dummyPort, dummyHost, dummyDocument));
+			CHECK_THROWS_WITH(ParseURL("fsfsd", dummyProtocol, dummyPort, dummyHost, dummyDocument), "Received string is not url");
 		}
 	}
 
@@ -22,7 +22,7 @@ SCENARIO("Parse url")
 	{
 		THEN("False")
 		{
-			CHECK(!ParseURL("https://:9000/smt", dummyProtocol, dummyPort, dummyHost, dummyDocument));
+			CHECK_THROWS_WITH(ParseURL("https://:9000/smt", dummyProtocol, dummyPort, dummyHost, dummyDocument), "Received string is not url");
 		}
 	}
 
@@ -42,7 +42,7 @@ SCENARIO("Parse url")
 	{
 		THEN("False")
 		{
-			CHECK(!ParseURL("https://localhost:65536/", dummyProtocol, dummyPort, dummyHost, dummyDocument));
+			CHECK_THROWS_WITH(ParseURL("https://localhost:653322536/", dummyProtocol, dummyPort, dummyHost, dummyDocument), "Received string is not url");
 		}
 	}
 
@@ -50,7 +50,8 @@ SCENARIO("Parse url")
 	{
 		THEN("False")
 		{
-			CHECK(!ParseURL("https://localhost:65536/", dummyProtocol, dummyPort, dummyHost, dummyDocument));
+			CHECK_THROWS_WITH(ParseURL("https://localhost:65536/", dummyProtocol, dummyPort, dummyHost, dummyDocument), 
+				"Port more then max acceptable port value");
 		}
 	}
 
@@ -92,7 +93,7 @@ SCENARIO("Parse url")
 	{
 		THEN("False")
 		{
-			CHECK(!ParseURL("protocol://www.youtube.com", dummyProtocol, dummyPort, dummyHost, dummyDocument));
+			CHECK_THROWS_WITH(ParseURL("protocol://www.youtube.com", dummyProtocol, dummyPort, dummyHost, dummyDocument), "Received string is not url");
 		}
 	}
 

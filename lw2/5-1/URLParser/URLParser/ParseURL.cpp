@@ -84,11 +84,11 @@ std::string GetDocument(const std::string& url)
 	return document.substr(2, document.length() - 2);
 }
 
-bool ParseURL(const std::string& url, Protocol& protocol, int& port, std::string& host, std::string& document)
+void ParseURL(const std::string& url, Protocol& protocol, int& port, std::string& host, std::string& document)
 {
 	if (!CheckUrl(url))
 	{
-		return false;
+		throw std::runtime_error("Received string is not url");
 	}
 	
 	GetProtocol(url, protocol);
@@ -99,11 +99,9 @@ bool ParseURL(const std::string& url, Protocol& protocol, int& port, std::string
 	const int maxPortValue = 65535;
 	if (port > maxPortValue)
 	{
-		return false;
+		throw std::runtime_error("Port more then max acceptable port value");
 	}
 
 	host = GetHost(url);
 	document = GetDocument(url);
-
-	return true;
 }
