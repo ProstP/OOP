@@ -38,6 +38,22 @@ SCENARIO("Parse url")
 		}
 	}
 
+	WHEN("Port contain symbols")
+	{
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(ParseURL("http://localhost:9a00", dummyProtocol, dummyPort, dummyHost, dummyDocument), "Received string is not url");
+		}
+	}
+
+	WHEN("Port is empty")
+	{
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(ParseURL("http://localhost:", dummyProtocol, dummyPort, dummyHost, dummyDocument), "Received string is not url");
+		}
+	}
+
 	WHEN("Port length more then acceptable value length")
 	{
 		THEN("False")
@@ -50,8 +66,7 @@ SCENARIO("Parse url")
 	{
 		THEN("False")
 		{
-			CHECK_THROWS_WITH(ParseURL("https://localhost:65536/", dummyProtocol, dummyPort, dummyHost, dummyDocument), 
-				"Port more then max acceptable port value");
+			CHECK_THROWS_WITH(ParseURL("https://localhost:65536/", dummyProtocol, dummyPort, dummyHost, dummyDocument), "");
 		}
 	}
 
@@ -94,6 +109,14 @@ SCENARIO("Parse url")
 		THEN("False")
 		{
 			CHECK_THROWS_WITH(ParseURL("protocol://www.youtube.com", dummyProtocol, dummyPort, dummyHost, dummyDocument), "Received string is not url");
+		}
+	}
+
+	WHEN("Between protocol and host invalid symbols")
+	{
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(ParseURL("http:dasdadaa/yoir.com", dummyProtocol, dummyPort, dummyHost, dummyDocument), "Received string is not url");
 		}
 	}
 
@@ -168,6 +191,4 @@ SCENARIO("Parse url")
 			CHECK(port == 21);
 		}
 	}
-
-	//Тест в порте буквы, пустой порт, символы, между протоколом и хостом невалидные набор симыволы
 }

@@ -17,6 +17,10 @@ int main(int argc, char* argv[])
 				<< "PORT: " << port << "\n"
 				<< "DOC: " << doc << "\n";
 		}
+		catch (const std::out_of_range& e)
+		{
+			std::cout << "Some value has exceeded the acceptable range\n";
+		}
 		catch (const std::exception& e)
 		{
 			std::cout << e.what() << "\n";

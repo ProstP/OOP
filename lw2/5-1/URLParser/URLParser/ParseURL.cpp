@@ -16,73 +16,46 @@ const std::map<Protocol, int> DEFAULT_PORT
 	{Protocol::FTP, 21}
 };
 
-bool CheckUrl(const std::string& url)
+std::string StringToLower(const std::string& str)
 {
-	const std::regex pattern("^(https|http|ftp)://([\\w-.,]+)(:\\d{1,5})?(/.+)?/?$", std::regex_constants::icase);
-	const std::smatch match;
-
-	if (!std::regex_match(url, pattern))
+	std::string lowerStr;
+	for (const char& c : str)
 	{
-		return false;
+		lowerStr += tolower(c);
 	}
 
-	return true;
+	return lowerStr;
 }
 
-void StringToLower(std::string& str)
+Protocol GetProtocol(const std::string& protocolStr)
 {
-	for (char& c : str)
+	return STRING_TO_PROTOCOL.at(StringToLower(protocolStr));
+}
+
+int GetPort(const std::string& portStr, const Protocol& protocol)
+{
+	if (portStr.empty())
 	{
-		c = tolower(c);
+		return DEFAULT_PORT.at(protocol);
 	}
-}
 
-void GetProtocol(const std::string& url, Protocol& protocol)
-{
-	const std::regex pattern("^([hH][tT][tT][pP][sS]?|[fF][tT][pP])");
-	std::smatch match;
-
-	std::regex_search(url, match, pattern);
-
-	std::string protocolStr = match[0].str();
-	StringToLower(protocolStr);
-	protocol = STRING_TO_PROTOCOL.at(protocolStr);
-}
-
-bool GetPort(const std::string& url, int& port)
-{
-	const std::regex portPattern(":\\d+");
-	std::smatch portMatch;
-	if (!std::regex_search(url, portMatch, portPattern))
+	int port = std::stoi(portStr.substr(1, portStr.length() - 1));
+	if (port > 65535)
 	{
-		return false;
+		throw std::out_of_range("");
 	}
-	std::string	portStr = portMatch[0].str();
-	std::string digitsStr = portStr.substr(1, portStr.length() - 1);
-
-	port = std::stoi(digitsStr);
-	return true;
+	
+	return port;
 }
 
-std::string GetHost(const std::string& url)
-{	
-	const std::regex hostPattern("://[\\w-.,]+");
-	std::smatch hostMatch;
-	std::regex_search(url, hostMatch, hostPattern);
-	std::string partWithHost = hostMatch[0].str();
-	return partWithHost.substr(3, partWithHost.length() - 3);
-}
-
-std::string GetDocument(const std::string& url)
+std::string GetDocument(const std::string& document)
 {
-	const std::regex documentPattern("[\\w-.,]/.+");
-	std::smatch documentMatch;
-	if (!std::regex_search(url, documentMatch, documentPattern))
+	if (document.empty())
 	{
 		return "";
 	}
-	std::string document = documentMatch[0].str();
-	return document.substr(2, document.length() - 2);
+
+	return document.substr(1, document.length() - 1);
 }
 
 void ParseURL(const std::string& url, Protocol& protocol, int& port, std::string& host, std::string& document)
@@ -92,25 +65,11 @@ void ParseURL(const std::string& url, Protocol& protocol, int& port, std::string
 
 	if (!std::regex_match(url, match, pattern))
 	{
-		//класс
 		throw std::runtime_error("Received string is not url");
 	}
 
-	for (auto i : match)
-	{
-		std::cout << i.str() << "\n";
-	}
-
-	protocol = STRING_TO_PROTOCOL.at(match[0].str());
-	host = match[1].str();
-	if (match[2].str().empty())
-	{
-		port = DEFAULT_PORT.at(protocol);
-	}
-	else
-	{
-		std::string portStr = match[2].str();
-		port = std::stoi(portStr.substr(1, portStr.size() - 1));
-	}
-	document = match[3].str();
+	protocol = GetProtocol(match[1].str());
+	host = match[2].str();
+	port = GetPort(match[3].str(), protocol);
+	document = GetDocument(match[4].str());
 }
