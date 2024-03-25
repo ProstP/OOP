@@ -27,10 +27,11 @@ int main(int argc, char* argv[])
 		Args args = ParseArgs(argc, argv);
 		std::set<int> primeNums = GeneratePrimeNumbersSet(args.upperBound);
 		std::cout << primeNums.size() << "\n";
-		std::cout << (clock() - start) / (float)CLOCKS_PER_SEC << "\n";
+		std::copy(primeNums.begin(), primeNums.end(), std::ostream_iterator<int>(std::cout, " "));
+		std::cout << "\n" << (clock() - start) / (float)CLOCKS_PER_SEC << "\n";
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what();
+		std::cout << e.what() << "\n";
 	}
 }

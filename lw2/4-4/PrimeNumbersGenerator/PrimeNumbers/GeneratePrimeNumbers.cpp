@@ -31,12 +31,12 @@ std::set<int> GeneratePrimeNumbersSet(int upperBound)
 {
 	if (upperBound <= 1)
 	{
-		throw std::runtime_error("Upper bound must be more then 1\n");
+		throw std::out_of_range("Upper bound must be more then 1\n");//Типы исключений
 	}
-	const int maxBound = 1000000000;
+	const int maxBound = 100'000'000;
 	if (upperBound > maxBound)
 	{
-		throw std::runtime_error("You have exceeded the maximum value of the upper bound\n");
+		throw std::out_of_range("You have exceeded the maximum value of the upper bound\n");
 	}
 
 	std::vector<bool> numbers(upperBound + 1, true);

@@ -18,7 +18,8 @@ const std::map<Protocol, int> DEFAULT_PORT
 
 bool CheckUrl(const std::string& url)
 {
-	const std::regex pattern("^([hH][tT][tT][pP][sS]?|[fF][tT][pP])://[\\w-.,]+(:\\d{1,5})?(/.+)?/?$");
+	const std::regex pattern("^(https|http|ftp)://([\\w-.,]+)(:\\d{1,5})?(/.+)?/?$", std::regex_constants::icase);
+	const std::smatch match;
 
 	if (!std::regex_match(url, pattern))
 	{
@@ -86,22 +87,30 @@ std::string GetDocument(const std::string& url)
 
 void ParseURL(const std::string& url, Protocol& protocol, int& port, std::string& host, std::string& document)
 {
-	if (!CheckUrl(url))
+	const std::regex pattern("^(https|http|ftp)://([\\w-.,]+)(:\\d{1,5})?(/.+)?/?$", std::regex_constants::icase);
+	std::smatch match;
+
+	if (!std::regex_match(url, match, pattern))
 	{
+		//класс
 		throw std::runtime_error("Received string is not url");
 	}
-	
-	GetProtocol(url, protocol);
-	if (!GetPort(url, port))
+
+	for (auto i : match)
+	{
+		std::cout << i.str() << "\n";
+	}
+
+	protocol = STRING_TO_PROTOCOL.at(match[0].str());
+	host = match[1].str();
+	if (match[2].str().empty())
 	{
 		port = DEFAULT_PORT.at(protocol);
 	}
-	const int maxPortValue = 65535;
-	if (port > maxPortValue)
+	else
 	{
-		throw std::runtime_error("Port more then max acceptable port value");
+		std::string portStr = match[2].str();
+		port = std::stoi(portStr.substr(1, portStr.size() - 1));
 	}
-
-	host = GetHost(url);
-	document = GetDocument(url);
+	document = match[3].str();
 }
