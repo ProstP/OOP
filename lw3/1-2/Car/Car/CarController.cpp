@@ -31,6 +31,7 @@ void PrintCommands()
 	{
 		std::cout << "[" << key << "]: " << command << "\n";
 	}
+	std::cout << "\n";
 }
 
 void Info(Car& car)
@@ -102,6 +103,8 @@ void ActivateCar()
 	Car car;
 	while (std::cin >> command)
 	{
+		system("cls");
+		PrintCommands();
 		if (command == EXIT)
 		{
 			break;
@@ -127,7 +130,6 @@ void ActivateCar()
 			std::cout << "Unknown command\n";
 			break;
 		}
-
-		PrintCommands();
+		std::cout << "\n";
 	}
 }

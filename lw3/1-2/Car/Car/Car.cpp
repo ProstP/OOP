@@ -105,7 +105,14 @@ bool Car::SetSpeed(int speed)
 	}
 	else
 	{
-		m_direction = m_gear > 0 ? CarDirection::Forward : CarDirection::Backward;
+		if (m_gear > 0)
+		{
+			m_direction = CarDirection::Forward;
+		}
+		if (m_gear < 0)
+		{
+			m_direction = CarDirection::Backward;
+		}
 	}
 	return true;
 }
