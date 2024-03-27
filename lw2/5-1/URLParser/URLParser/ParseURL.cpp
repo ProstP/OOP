@@ -50,12 +50,7 @@ int GetPort(const std::string& portStr, const Protocol& protocol)
 
 std::string GetDocument(const std::string& document)
 {
-	if (document.empty())
-	{
-		return "";
-	}
-
-	return document.substr(1, document.length() - 1);
+	return document.empty() ? "" : document.substr(1, document.length() - 1);
 }
 
 void ParseURL(const std::string& url, Protocol& protocol, int& port, std::string& host, std::string& document)
