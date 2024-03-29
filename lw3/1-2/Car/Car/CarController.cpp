@@ -37,7 +37,7 @@ void PrintCommands()
 void Info(Car& car)
 {
 	std::cout << "Gear: " << car.GetGear() << "\n"
-			  << "Speed: " << car.GetSpeed() << "\n"
+			  << "Speed: " << (car.GetDirection() == CarDirection::Backward ? "-" : "") << car.GetSpeed() << "\n"
 			  << "Engine: " << (car.IsTurnedOn() ? "On" : "Off") << "\n"
 			  << "Direction: " << DIRECTION_STRING.at(car.GetDirection()) << "\n";
 }
@@ -68,7 +68,7 @@ void TurnOffEngine(Car& car)
 
 void SetGear(Car& car)
 {
-	std::cout << "Set new gear:\n";
+	std::cout << "Set new gear: ";
 	int gear;
 	std::cin >> gear;
 	if (car.SetGear(gear))
@@ -83,7 +83,7 @@ void SetGear(Car& car)
 
 void SetSpeed(Car& car)
 {
-	std::cout << "Set new speed:\n";
+	std::cout << "Set new speed modulo: ";
 	int speed;
 	std::cin >> speed;
 	if (car.SetSpeed(speed))

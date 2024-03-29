@@ -79,6 +79,7 @@ bool Car::SetGear(int gear)
 
 bool Car::SetSpeed(int speed)
 {
+	speed = abs(speed);
 	if (!m_isTurnedOn)
 	{
 		return false;
