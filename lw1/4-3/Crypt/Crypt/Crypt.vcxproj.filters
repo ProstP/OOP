@@ -19,4 +19,16 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Tests.bat">
+      <Filter>Исходные файлы</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt" />
+    <Text Include="output.txt" />
+    <Text Include="Empty.txt" />
+    <Text Include="OneLine.txt" />
+    <Text Include="ManyLines.txt" />
+  </ItemGroup>
 </Project>

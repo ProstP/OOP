@@ -1,20 +1,144 @@
-﻿// Crypt.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include <iostream>
+#include <string>
+#include <fstream>
 
-#include <iostream>
+const int MAX_KEY_VALUE = 255;
+const int MIN_KEY_VALUE = 0;
 
-int main()
+enum class Mode
 {
-    std::cout << "Hello World!\n";
+	Crypt,
+	Decrypt
+};
+
+struct Args
+{
+	Mode mode;
+	std::string inFileName;
+	std::string outFileName;
+	int key;
+};
+
+Args ParseArgs(int argc, char* argv[])
+{
+	if (argc != 5)
+	{
+		throw std::invalid_argument("Invalid argument count\nUsage: crypt.exe <mode> <input file> <output file> <key>");
+	}
+
+	Args args;
+	std::string mode = argv[1];
+	if (mode == "crypt")
+	{
+		args.mode = Mode::Crypt;
+	}
+	else if (mode == "decrypt")
+	{
+		args.mode = Mode::Decrypt;
+	}
+	else
+	{
+		throw std::invalid_argument("Unknown mode: " + mode);
+	}
+	args.inFileName = argv[2];
+	args.outFileName = argv[3];
+	args.key = std::stoi(argv[4]);
+	if (args.key < MIN_KEY_VALUE || args.key > MAX_KEY_VALUE)
+	{
+		throw std::invalid_argument("Invalid key value");
+	}
+
+	return args;
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+unsigned char MixBits(char byte)
+{
+	unsigned char result = 0;
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+	result |= (byte & 0b00000111) << 2;
+	result |= (byte & 0b00011000) << 3;
+	result |= (byte & 0b01100000) >> 5;
+	result |= (byte & 0b10000000) >> 2;
+
+	return result;
+}
+
+void Crypt(std::ifstream& inFile, std::ofstream& outFile, int key)
+{
+	char byte;
+	while (inFile.read(&byte, sizeof(byte)))
+	{
+		byte ^= key;
+		outFile.put(MixBits(byte));
+	}
+}
+
+unsigned char UnMixBits(char byte)
+{
+	unsigned char result = 0;
+
+	result |= (byte & 0b00000011) << 5;
+	result |= (byte & 0b00011100) >> 2;
+	result |= (byte & 0b00100000) << 2;
+	result |= (byte & 0b11000000) >> 3;
+
+	return result;
+}
+
+void Decrypt(std::ifstream& inFile, std::ostream& outFile, int key)
+{
+	char byte;
+	while (inFile.read(&byte, sizeof(byte)))
+	{
+		byte = UnMixBits(byte);
+		outFile.put(byte ^ key);
+	}
+}
+
+void CryptOrDecryptFile(const Mode& mode, const std::string& inFileName, const std::string& outFileName, int key)
+{
+	std::ifstream inFile(inFileName, std::ios::binary | std::ios::in);
+	if (!inFile.is_open())
+	{
+		throw std::runtime_error("Failed to open: " + inFileName + " to read");
+	}
+	std::ofstream outFile(outFileName, std::ios::binary | std::ios::out);
+	if (!outFile.is_open())
+	{
+		throw std::runtime_error("Falied to open: " + outFileName + " to write");
+	}
+
+	if (mode == Mode::Crypt)
+	{
+		Crypt(inFile, outFile, key);
+	}
+	if (mode == Mode::Decrypt)
+	{
+		Decrypt(inFile, outFile, key);
+	}
+
+	if (!inFile.eof())
+	{
+		throw std::runtime_error("Failed to read data from " + inFileName);
+	}
+	if (!outFile.flush())
+	{
+		throw std::runtime_error("Failed to write data to " + outFileName);
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	try
+	{
+		auto args = ParseArgs(argc, argv);
+		CryptOrDecryptFile(args.mode, args.inFileName, args.outFileName, args.key);
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << "\n";
+		return 1;
+	}
+
+	return 0;
+}
