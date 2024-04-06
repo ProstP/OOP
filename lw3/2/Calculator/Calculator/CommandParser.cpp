@@ -1,7 +1,7 @@
 #include "CommandParser.h"
-#include <string>
 #include "Commands.h"
 #include <iomanip>
+#include <string>
 
 const int PRECISION = 2;
 
@@ -31,14 +31,14 @@ void CommandParser::Handle(std::istream& in, std::ostream& out)
 }
 
 void CommandParser::DefineCommand(const std::string& str, std::ostream& out)
-{
+{//Доработать парсер
 	if (str.find(PRINTVARS_COMMAND) != std::string::npos)
 	{
-	PrintVarsCommand(out);
+		PrintVarsCommand(out);
 	}
 	else if (str.find(PRINTFNS_COMMAND) != std::string::npos)
 	{
-	PrintFnsCommand(out);
+		PrintFnsCommand(out);
 	}
 	else if (str.find(VAR_COMMAND) != std::string::npos)
 	{

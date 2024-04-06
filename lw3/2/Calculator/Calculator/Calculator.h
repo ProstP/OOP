@@ -16,12 +16,13 @@ public:
 		const Operations& operation = Operations::NONE,
 		const std::string& secondIdentifier = "");
 	double Print(const std::string& identifier);
+	//При получении всех перемнных и всех функций, нельзя возарщать map, callback функция, которая бы распечатала все значения внутри метода
 	std::map<std::string, std::string> GetVars();
 	std::map<std::string, Function> GetFuncs();
 
 private:
 	std::map<std::string, std::string> m_vars;
 	std::map<std::string, Function> m_funcs;
-	std::set<std::string> m_usedIdentifiers;
-	void CheckIdentifiersForUsing(const std::string& identifier);
+	std::set<std::string> m_usedIdentifiers;//Пермесестить в парсер
+	bool IsIdentifierUsing(const std::string& identifier);
 };

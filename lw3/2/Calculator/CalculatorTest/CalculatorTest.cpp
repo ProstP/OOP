@@ -5,6 +5,12 @@
 #include "../Calculator/CommandParser.h"
 #include "../Calculator/UndefinedValue.h"
 
+//использовать правильные стрелки, знать типы отношений между классами
+//»збавитьс€ от мнржества usedIdent...
+//ѕеремнные в double, использовать NAN
+//Fn отдельно с 1 и с 3 аргументами
+//ћетоды которые не измен€ют состо€ние объекта должны быть const, вы€снить почему
+
 SCENARIO("Execute func")
 {
 	const std::map<std::string, std::string> vars{
@@ -17,7 +23,7 @@ SCENARIO("Execute func")
 		{ "2MulVar", "87" },
 		{ "1DivVar", "13" },
 		{ "2DivVar", "6.5" },
-		{ "Undefined", UNDEFINED_VALUE}
+		{ "Undefined", UNDEFINED_VALUE }
 	};
 	WHEN("Func with 1 arg without operation")
 	{
@@ -179,11 +185,20 @@ SCENARIO("Edit var by let")
 
 SCENARIO("Declare functions")
 {
+	WHEN("Declare func with not declareted arguments")
+	{
+		THEN("Will be throw exception")
+		{
+			Calculator calculator;
+			CHECK_THROWS_WITH(calculator.Fn("func", "1arg", Operations::ADD, "2arg"), "Unknown argument");
+		}
+	}
 	WHEN("Declare func with 1 argument")
 	{
 		THEN("Count of funcs will be increase")
 		{
 			Calculator calculator;
+			calculator.Var("1arg");
 			calculator.Fn("func", "1arg");
 			CHECK(calculator.GetFuncs().size() == 1);
 		}
@@ -193,6 +208,8 @@ SCENARIO("Declare functions")
 		THEN("Count of funcs will be increase")
 		{
 			Calculator calculator;
+			calculator.Var("1arg");
+			calculator.Var("2arg");
 			calculator.Fn("func", "1arg", Operations::ADD, "2arg");
 			CHECK(calculator.GetFuncs().size() == 1);
 		}
@@ -258,7 +275,7 @@ SCENARIO("Parsing commands")
 	}
 	WHEN("Fn command")
 	{
-		std::string ans = GetAnsFromParser("fn f = x * x", commandParser);
+		std::string ans = GetAnsFromParser("let x=8\nfn f = x * x", commandParser);
 		CHECK(ans.empty());
 	}
 	WHEN("Invalid print command")

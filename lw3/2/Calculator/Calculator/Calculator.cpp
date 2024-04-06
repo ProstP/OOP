@@ -1,17 +1,19 @@
 #include "Calculator.h"
-#include "UndefinedValue.h"
 #include "Commands.h"
+#include "UndefinedValue.h"
 #include <string>
 
 Calculator::Calculator()
 {
-	m_usedIdentifiers = {VAR_COMMAND, LET_COMMAND, FN_COMMAND, PRINT_COMMAND, PRINTVARS_COMMAND, PRINTFNS_COMMAND};
+	m_usedIdentifiers = { VAR_COMMAND, LET_COMMAND, FN_COMMAND, PRINT_COMMAND, PRINTVARS_COMMAND, PRINTFNS_COMMAND };
 }
 
 void Calculator::Var(const std::string& identifier)
 {
-	CheckIdentifiersForUsing(identifier);
-	m_usedIdentifiers.insert(identifier);
+	if (IsIdentifierUsing(identifier))
+	{
+		throw std::invalid_argument("Identifier already used");
+	}
 	m_vars[identifier] = UNDEFINED_VALUE;
 }
 
@@ -48,7 +50,14 @@ void Calculator::Fn(
 	const Operations& operation,
 	const std::string& secondIdentifier)
 {
-	CheckIdentifiersForUsing(identifier);
+	if (IsIdentifierUsing(identifier))
+	{
+		throw std::invalid_argument("Identifier already used");
+	}
+	if (!IsIdentifierUsing(firstIdentifier) || (!secondIdentifier.empty() && !IsIdentifierUsing(secondIdentifier)))
+	{
+		throw std::invalid_argument("Unknown argument");
+	}
 	Function func(firstIdentifier, operation, secondIdentifier);
 	m_usedIdentifiers.insert(identifier);
 	m_funcs[identifier] = func;
@@ -78,10 +87,19 @@ std::map<std::string, Function> Calculator::GetFuncs()
 	return m_funcs;
 }
 
-void Calculator::CheckIdentifiersForUsing(const std::string& identifier)
+bool Calculator::IsIdentifierUsing(const std::string& identifier)
 {
+	if (m_vars.contains(identifier))
+	{
+		return true;
+	}
+	if (m_funcs.contains(identifier))
+	{
+		return true;
+	}
 	if (m_usedIdentifiers.contains(identifier))
 	{
-		throw std::invalid_argument("Identifier already used");
+		return true;
 	}
+	return false;
 }
