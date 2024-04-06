@@ -1,6 +1,5 @@
 #include "Function.h"
 #include <string>
-#include "UndefinedValue.h"
 
 Function::Function(const std::string& firstIdentifier, const Operations& operation, const std::string& secondIdentifier)
 {
