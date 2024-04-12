@@ -1,74 +1,71 @@
 #include "Function.h"
 #include <string>
 
-Function::Function(const std::string& firstIdentifier, const Operations& operation, const std::string& secondIdentifier)
+Function::Function()
 {
-	m_identifiers.push_back(firstIdentifier);
-	m_operation = operation;
-	if (m_operation != Operations::NONE)
-	{
-		m_identifiers.push_back(secondIdentifier);
-	}
+	//throw std::invalid_argument("Function must have at least 1 arg");
 }
 
-std::string Function::Execute(const std::map<std::string, std::string>& vars, const std::map<std::string, Function>& funcs)
+Function::Function(const std::string& identifier)
 {
-	std::string firstArgStr = GetValueWithIdentifier(m_identifiers[0], vars, funcs);
-	if (firstArgStr == UNDEFINED_VALUE)
+	if (identifier.empty())
 	{
-		return UNDEFINED_VALUE;
+		throw std::invalid_argument("Identifier can't be empty str");
 	}
-	double firstArg = std::stod(firstArgStr);
+	m_identifiers.push_back(identifier);
+}
+
+Function::Function(const std::string& firstIdentifier, const Operations& operation, const std::string& secondIdentifier)
+{
+	if (operation == Operations::NONE)
+	{
+		throw std::invalid_argument("Function with 2 args can't has none operation");
+	}
+	if (firstIdentifier.empty() || secondIdentifier.empty())
+	{
+		throw std::invalid_argument("Identifier can't be empty str");
+	}
+
+	m_identifiers.push_back(firstIdentifier);
+	m_operation = operation;
+	m_identifiers.push_back(secondIdentifier);
+}
+
+double Function::Execute(const std::function<double(std::string)>& GetValue) const
+{
+	double firstArg = GetValue(m_identifiers[0]);
+	if (std::isnan(firstArg))
+	{
+		return NAN;
+	}
 
 	if (m_operation == Operations::NONE)
 	{
-		return std::to_string(firstArg);
+		return firstArg;
 	}
 
-	std::string secondArgStr = GetValueWithIdentifier(m_identifiers[1], vars, funcs);
-	if (secondArgStr == UNDEFINED_VALUE)
+	double secondArg = GetValue(m_identifiers[1]);
+	if (std::isnan(secondArg))
 	{
-		return UNDEFINED_VALUE;
+		return NAN;
 	}
-	double secondArg = std::stod(secondArgStr);
-	double result;
 
+	return CalculateOperationResult(firstArg, secondArg);
+}
+
+double Function::CalculateOperationResult(double firstArg, double secondArg) const
+{
 	switch (m_operation)
 	{
 	case Operations::ADD:
-		result = firstArg + secondArg;
-		break;
+		return firstArg + secondArg;
 	case Operations::SUB:
-		result = firstArg - secondArg;
-		break;
+		return firstArg - secondArg;
 	case Operations::MUL:
-		result = firstArg * secondArg;
-		break;
+		return firstArg * secondArg;
 	case Operations::DIV:
-		result = firstArg / secondArg;
-		break;
+		return firstArg / secondArg;
 	default:
 		throw std::invalid_argument("Invalid operation");
-		break;
 	}
-
-	return std::to_string(result);
-}
-
-std::string Function::GetValueWithIdentifier(const std::string& identifier,
-	const std::map<std::string, std::string>& vars,
-	const std::map<std::string, Function>& funcs)
-{
-	if (vars.contains(identifier))
-	{
-		return vars.at(identifier);
-	}
-
-	if (funcs.contains(identifier))
-	{
-		auto func = funcs.at(identifier);
-		return func.Execute(vars, funcs);
-	}
-
-	throw std::runtime_error("Unknown identifier: " + identifier);
 }

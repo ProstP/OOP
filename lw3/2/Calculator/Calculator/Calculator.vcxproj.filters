@@ -41,9 +41,6 @@
     <ClInclude Include="Operations.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="UndefinedValue.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Commands.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>

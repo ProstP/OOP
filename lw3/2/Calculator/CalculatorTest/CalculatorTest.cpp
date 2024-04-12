@@ -3,96 +3,106 @@
 #define CATCH_CONFIG_MAIN
 #include "../../../../catch.hpp"
 #include "../Calculator/CommandParser.h"
-#include "../Calculator/UndefinedValue.h"
-
-//использовать правильные стрелки, знать типы отношений между классами
-//»збавитьс€ от мнржества usedIdent...
-//ѕеремнные в double, использовать NAN
-//Fn отдельно с 1 и с 3 аргументами
-//ћетоды которые не измен€ют состо€ние объекта должны быть const, вы€снить почему
 
 SCENARIO("Execute func")
 {
-	const std::map<std::string, std::string> vars{
-		{ "OperationIsNone", "122" },
-		{ "1AddVar", "5" },
-		{ "2AddVar", "10" },
-		{ "1SubVar", "79" },
-		{ "2SubVar", "13" },
-		{ "1MulVar", "13" },
-		{ "2MulVar", "87" },
-		{ "1DivVar", "13" },
-		{ "2DivVar", "6.5" },
-		{ "Undefined", UNDEFINED_VALUE }
-	};
+	auto GetValue = [](std::string identifier)
+	{
+		const std::map<std::string, double> vars{
+			{ "OperationIsNone", 122 },
+			{ "AddVar1", 5 },
+			{ "AddVar2", 10 },
+			{ "SubVar1", 79 },
+			{ "SubVar2", 13 },
+			{ "MulVar1", 13 },
+			{ "MulVar2", 87 },
+			{ "DivVar1", 13 },
+			{ "DivVar2", 6.5 },
+			{ "Undefined", NAN }
+		};
+
+		return vars.at(identifier);
+	}; 
+	
 	WHEN("Func with 1 arg without operation")
 	{
 		THEN("Ans = value of var")
 		{
-			Function func("OperationIsNone", Operations::NONE, "");
-			CHECK(std::stod(func.Execute(vars, {})) == 122);
+			Function func("OperationIsNone");
+			CHECK(func.Execute(GetValue) == 122);
 		}
 	}
 	WHEN("Sum 5 and 10")
 	{
 		THEN("Ans = 15")
 		{
-			Function func("1AddVar", Operations::ADD, "2AddVar");
-			CHECK(std::stod(func.Execute(vars, {})) == 15);
+			Function func("AddVar1", Operations::ADD, "AddVar2");
+			CHECK(func.Execute(GetValue) == 15);
 		}
 	}
 	WHEN("Difference 79 and 13")
 	{
 		THEN("Ans = 66")
 		{
-			Function func("1SubVar", Operations::SUB, "2SubVar");
-			CHECK(std::stod(func.Execute(vars, {})) == 66);
+			Function func("SubVar1", Operations::SUB, "SubVar2");
+			CHECK(func.Execute(GetValue) == 66);
 		}
 	}
 	WHEN("Multiply 13 with 87")
 	{
 		THEN("Ans = 1131")
 		{
-			Function func("1MulVar", Operations::MUL, "2MulVar");
-			CHECK(std::stod(func.Execute(vars, {})) == 1131);
+			Function func("MulVar1", Operations::MUL, "MulVar2");
+			CHECK(func.Execute(GetValue) == 1131);
 		}
 	}
 	WHEN("Division 13 to 6.5")
 	{
 		THEN("Ans = 2")
 		{
-			Function func("1DivVar", Operations::DIV, "2DivVar");
-			CHECK(std::stod(func.Execute(vars, {})) == 2);
+			Function func("DivVar1", Operations::DIV, "DivVar2");
+			CHECK(func.Execute(GetValue) == 2);
 		}
 	}
 	WHEN("Var is not undefined")
 	{
 		THEN("Ans = Nan")
 		{
-			Function func("1AddVar", Operations::ADD, "Undefined");
-			CHECK(func.Execute(vars, {}) == UNDEFINED_VALUE);
+			Function func("AddVar1", Operations::ADD, "Undefined");
+			CHECK(std::isnan(func.Execute(GetValue)));
 		}
 	}
-	WHEN("Args of funcs are funcs: (5 + 10) and (13 / 6.5)")
+	WHEN("Opearation = none with 2 args")
 	{
-		THEN("15 * 2 = 30")
+		THEN("Will be throw exception")
 		{
-			Function funcSum("1AddVar", Operations::ADD, "2AddVar");
-			Function funcDiv("1DivVar", Operations::DIV, "2DivVar");
-			const std::map<std::string, Function> funcs{
-				{ "Sum", funcSum },
-				{ "Div", funcDiv }
+			auto declareFunction = []()
+			{
+				Function func("AddVar1", Operations::NONE, "AddVar2");
 			};
-			Function func("Sum", Operations::MUL, "Div");
-			CHECK(std::stod(func.Execute(vars, funcs)) == 30);
+			CHECK_THROWS_WITH(declareFunction(), "Function with 2 args can't has none operation");
 		}
 	}
-	WHEN("Identifier is unknown")
+	WHEN("Identifier is empty fn with 1 arg")
 	{
-		THEN("Will throw exception")
+		THEN("Will be throw exception")
 		{
-			Function func("1DivVar", Operations::DIV, "unknown");
-			CHECK_THROWS_WITH(func.Execute(vars, {}), "Unknown identifier: unknown");
+			auto declareFunction = []()
+			{
+				Function func("");
+			};
+			CHECK_THROWS_WITH(declareFunction(), "Identifier can't be empty str");
+		}
+	}
+	WHEN("Identifiers are empty fn with 2 arg")
+	{
+		THEN("Will be throw exception")
+		{
+			auto declareFunction = []()
+			{
+				Function func("", Operations::SUB, "");
+			};
+			CHECK_THROWS_WITH(declareFunction(), "Identifier can't be empty str");
 		}
 	}
 }
@@ -101,13 +111,11 @@ SCENARIO("Add new var")
 {
 	WHEN("Declare new var")
 	{
-		THEN("Count of vars will be increase and var has undefined value")
+		THEN("Var has Nan value")
 		{
 			Calculator calculator;
 			calculator.Var("id");
-			auto vars = calculator.GetVars();
-			CHECK(vars.size() == 1);
-			CHECK(vars["id"] == UNDEFINED_VALUE);
+			CHECK(std::isnan(calculator.GetValueByIdentifier("id")));
 		}
 	}
 	WHEN("Identifier already used")
@@ -132,9 +140,7 @@ SCENARIO("Edit var by let")
 		{
 			Calculator calculator;
 			calculator.Let(identifier, value);
-			auto vars = calculator.GetVars();
-			CHECK(vars.size() == 1);
-			CHECK(vars.at(identifier) == value);
+			CHECK(calculator.GetValueByIdentifier(identifier) == std::stod(value));
 		}
 	}
 
@@ -145,8 +151,7 @@ SCENARIO("Edit var by let")
 			Calculator calculator;
 			calculator.Var(identifier);
 			calculator.Let(identifier, value);
-			auto vars = calculator.GetVars();
-			CHECK(vars.at(identifier) == value);
+			CHECK(calculator.GetValueByIdentifier(identifier) == std::stod(value));
 		}
 	}
 	WHEN("Value is var")
@@ -156,41 +161,38 @@ SCENARIO("Edit var by let")
 			Calculator calculator;
 			calculator.Let("var1", "5");
 			calculator.Let("var2", "var1");
-			auto vars = calculator.GetVars();
-			CHECK(vars.at("var2") == "5");
+			CHECK(calculator.GetValueByIdentifier("var2") == 5);
 		}
 	}
 	WHEN("Value is func")
 	{
-		THEN("New var has value of entered var")
+		THEN("New var has result of entered func")
 		{
 			Calculator calculator;
 			calculator.Let("var1", "2");
 			calculator.Let("var2", "3");
-			calculator.Fn("func", "var1", Operations::ADD, "var2");
+			calculator.FnBinary("func", "var1", Operations::ADD, "var2");
 			calculator.Let(identifier, "func");
-			auto vars = calculator.GetVars();
-			CHECK(vars.at(identifier) == "5.000000");
+			CHECK(calculator.GetValueByIdentifier(identifier) == 5);
 		}
 	}
-	WHEN("Value is invalid")
-	{
-		THEN("New var has value of entered var")
-		{
-			Calculator calculator;
-			CHECK_THROWS_WITH(calculator.Let(identifier, "value"), "Value must be digit or var");
-		}
-	}
-}
-
-SCENARIO("Declare functions")
-{
-	WHEN("Declare func with not declareted arguments")
+	WHEN("Value has unknown identifier")
 	{
 		THEN("Will be throw exception")
 		{
 			Calculator calculator;
-			CHECK_THROWS_WITH(calculator.Fn("func", "1arg", Operations::ADD, "2arg"), "Unknown argument");
+			CHECK_THROWS_WITH(calculator.Let("var1", "var2"), "Invalid value");
+		}
+	}
+}
+SCENARIO("Declare functions")
+{
+	WHEN("Declare func with unknown identifiers")
+	{
+		THEN("Will be throw exception")
+		{
+			Calculator calculator;
+			CHECK_THROWS_WITH(calculator.FnBinary("func", "1arg", Operations::ADD, "2arg"), "Unknown argument");
 		}
 	}
 	WHEN("Declare func with 1 argument")
@@ -198,9 +200,9 @@ SCENARIO("Declare functions")
 		THEN("Count of funcs will be increase")
 		{
 			Calculator calculator;
-			calculator.Var("1arg");
-			calculator.Fn("func", "1arg");
-			CHECK(calculator.GetFuncs().size() == 1);
+			calculator.Let("1arg", "25");
+			calculator.FnUnary("func", "1arg");
+			CHECK(calculator.GetValueByIdentifier("func") == 25);
 		}
 	}
 	WHEN("Declare func with operation and 2 argument")
@@ -208,10 +210,10 @@ SCENARIO("Declare functions")
 		THEN("Count of funcs will be increase")
 		{
 			Calculator calculator;
-			calculator.Var("1arg");
-			calculator.Var("2arg");
-			calculator.Fn("func", "1arg", Operations::ADD, "2arg");
-			CHECK(calculator.GetFuncs().size() == 1);
+			calculator.Let("1arg", "20");
+			calculator.Let("2arg", "50");
+			calculator.FnBinary("func", "1arg", Operations::ADD, "2arg");
+			CHECK(calculator.GetValueByIdentifier("func") == 70);
 		}
 	}
 	WHEN("Identifier already used")
@@ -220,7 +222,22 @@ SCENARIO("Declare functions")
 		{
 			Calculator calculator;
 			calculator.Var("id");
-			CHECK_THROWS_WITH(calculator.Fn("id", "arg1", Operations::ADD, "arg2"), "Identifier already used");
+			CHECK_THROWS_WITH(calculator.FnBinary("id", "arg1", Operations::ADD, "arg2"), "Identifier already used");
+		}
+	}
+	WHEN("Args of func are funcs: (5 + 10) * (13 / 6.5)")
+	{
+		THEN("Result of func = 30")
+		{
+			Calculator calculator;
+			calculator.Let("var1", "5");
+			calculator.Let("var2", "10");
+			calculator.Let("var3", "13");
+			calculator.Let("var4", "6.5");
+			calculator.FnBinary("fn1", "var1", Operations::ADD, "var2");
+			calculator.FnBinary("fn2", "var3", Operations::DIV, "var4");
+			calculator.FnBinary("fn3", "fn1", Operations::MUL, "fn2");
+			CHECK(calculator.GetValueByIdentifier("fn3") == 30);
 		}
 	}
 }
@@ -253,6 +270,11 @@ SCENARIO("Parsing commands")
 		std::string ans = GetAnsFromParser("createvar x", commandParser);
 		CHECK(ans == "Invalid command\n");
 	}
+	WHEN("Invalid var command, invalid identifier")
+	{
+		std::string ans = GetAnsFromParser("var 1x", commandParser);
+		CHECK(ans == "Invalid command\n");
+	}
 	WHEN("Var command")
 	{
 		std::string ans = GetAnsFromParser("var x", commandParser);
@@ -261,6 +283,11 @@ SCENARIO("Parsing commands")
 	WHEN("Invalid let command")
 	{
 		std::string ans = GetAnsFromParser("let x", commandParser);
+		CHECK(ans == "Invalid command\n");
+	}
+	WHEN("Invalid let command, invalid identifier")
+	{
+		std::string ans = GetAnsFromParser("let 1x = 2", commandParser);
 		CHECK(ans == "Invalid command\n");
 	}
 	WHEN("Let command")
@@ -273,6 +300,11 @@ SCENARIO("Parsing commands")
 		std::string ans = GetAnsFromParser("fn f", commandParser);
 		CHECK(ans == "Invalid command\n");
 	}
+	WHEN("Invalid fn command, invalid identifier")
+	{
+		std::string ans = GetAnsFromParser("let x=8\nfn 1f = x * x", commandParser);
+		CHECK(ans == "Invalid command\n");
+	}
 	WHEN("Fn command")
 	{
 		std::string ans = GetAnsFromParser("let x=8\nfn f = x * x", commandParser);
@@ -283,19 +315,39 @@ SCENARIO("Parsing commands")
 		std::string ans = GetAnsFromParser("print x, y", commandParser);
 		CHECK(ans == "Invalid command\n");
 	}
-	WHEN("Print command")
+	WHEN("Print command var value")
+	{
+		std::string ans = GetAnsFromParser("let x=4\nprint x", commandParser);
+		CHECK(ans == "4.00\n");
+	}
+	WHEN("Print command fn value")
 	{
 		std::string ans = GetAnsFromParser("let x=4\nfn f=x*x\nprint f", commandParser);
 		CHECK(ans == "16.00\n");
+	}
+	WHEN("Invalid printvars command")
+	{
+		std::string ans = GetAnsFromParser("let x=4\nlet y=5\nprintvarsss", commandParser);
+		CHECK(ans == "Invalid command\n");
 	}
 	WHEN("Printvars command")
 	{
 		std::string ans = GetAnsFromParser("let x=4\nlet y=5\nprintvars", commandParser);
 		CHECK(ans == "x:4.00\ny:5.00\n");
 	}
+	WHEN("Invalid printfns command")
+	{
+		std::string ans = GetAnsFromParser("let x=4\nlet y=5\nfn f1=x*y\nfn f2=x*x\ndsdprintfns", commandParser);
+		CHECK(ans == "Invalid command\n");
+	}
 	WHEN("Printfns command")
 	{
 		std::string ans = GetAnsFromParser("let x=4\nlet y=5\nfn f1=x*y\nfn f2=x*x\nprintfns", commandParser);
 		CHECK(ans == "f1:20.00\nf2:16.00\n");
+	}
+	WHEN("Using reserved identifier")
+	{
+		std::string ans = GetAnsFromParser("var let", commandParser);
+		CHECK(ans == "Identifier has already been reserved\n");
 	}
 }

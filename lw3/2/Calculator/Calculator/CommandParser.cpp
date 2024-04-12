@@ -2,6 +2,7 @@
 #include "Commands.h"
 #include <iomanip>
 #include <string>
+#include <set>
 
 const int PRECISION = 2;
 
@@ -31,31 +32,35 @@ void CommandParser::Handle(std::istream& in, std::ostream& out)
 }
 
 void CommandParser::DefineCommand(const std::string& str, std::ostream& out)
-{//Доработать парсер
+{
 	if (str.find(PRINTVARS_COMMAND) != std::string::npos)
 	{
+		std::smatch match;
+		ParseCommand(std::regex("^(printvars)$"), match, str);
 		PrintVarsCommand(out);
 	}
 	else if (str.find(PRINTFNS_COMMAND) != std::string::npos)
 	{
+		std::smatch match;
+		ParseCommand(std::regex("^(printfns)$"), match, str);
 		PrintFnsCommand(out);
 	}
 	else if (str.find(VAR_COMMAND) != std::string::npos)
 	{
 		std::smatch match;
-		ParseCommand(std::regex("^(var)\\s+(\\w+)$"), match, str);
+		ParseCommand(std::regex("^(var)\\s+([A-Za-z]\\w*)$"), match, str);
 		VarCommand(match[2].str());
 	}
 	else if (str.find(LET_COMMAND) != std::string::npos)
 	{
 		std::smatch match;
-		ParseCommand(std::regex("^(let)\\s+(\\w+)\\s*=\\s*([\\w\.]+)$"), match, str);
+		ParseCommand(std::regex("^(let)\\s+([A-Za-z]\\w*)\\s*=\\s*([\\w\.]+)$"), match, str);
 		LetCommand(match[2].str(), match[3].str());
 	}
 	else if (str.find(FN_COMMAND) != std::string::npos)
 	{
 		std::smatch match;
-		ParseCommand(std::regex("^(fn)\\s+(\\w+)\\s*=\\s*(\\w+)\\s*([\\+\\-\\*\\/])?\\s*(\\w+)?$"), match, str);
+		ParseCommand(std::regex("^(fn)\\s+([A-Za-z]\\w*)\\s*=\\s*(\\w+)\\s*([\\+\\-\\*\\/])?\\s*(\\w+)?$"), match, str);
 		FnCommand(match[2].str(), match[3].str(), match[4].str(), match[5].str());
 	}
 	else if (str.find(PRINT_COMMAND) != std::string::npos)
@@ -70,7 +75,7 @@ void CommandParser::DefineCommand(const std::string& str, std::ostream& out)
 	}
 }
 
-void CommandParser::ParseCommand(const std::regex& pattern, std::smatch& match, const std::string& command)
+void CommandParser::ParseCommand(const std::regex& pattern, std::smatch& match, const std::string& command) const
 {
 	if (!std::regex_match(command, match, pattern))
 	{
@@ -80,19 +85,22 @@ void CommandParser::ParseCommand(const std::regex& pattern, std::smatch& match, 
 
 void CommandParser::VarCommand(const std::string& identifier)
 {
+	CheckIdentifierWithReservedWords(identifier);
 	m_calculator.Var(identifier);
 }
 
 void CommandParser::LetCommand(const std::string& identifier, const std::string& value)
 {
+	CheckIdentifierWithReservedWords(identifier);
 	m_calculator.Let(identifier, value);
 }
 
 void CommandParser::FnCommand(const std::string& identifier, const std::string& arg1, const std::string& operation, const std::string& arg2)
 {
+	CheckIdentifierWithReservedWords(identifier);
 	if (arg2.empty())
 	{
-		m_calculator.Fn(identifier, arg1);
+		m_calculator.FnUnary(identifier, arg1);
 		return;
 	}
 
@@ -103,34 +111,49 @@ void CommandParser::FnCommand(const std::string& identifier, const std::string& 
 		{ "/", Operations::DIV }
 	};
 
-	m_calculator.Fn(identifier, arg1, OperationsFromStr.at(operation), arg2);
+	m_calculator.FnBinary(identifier, arg1, OperationsFromStr.at(operation), arg2);
 }
 
-void CommandParser::PrintCommand(const std::string& identifier, std::ostream& out)
+void CommandParser::PrintCommand(const std::string& identifier, std::ostream& out) const
 {
 	out << std::fixed << std::setprecision(PRECISION);
 
-	out << m_calculator.Print(identifier) << "\n";
+	out << m_calculator.GetValueByIdentifier(identifier) << "\n";
 }
 
-void CommandParser::PrintVarsCommand(std::ostream& out)
+void CommandParser::PrintVarsCommand(std::ostream& out) const
 {
 	out << std::fixed << std::setprecision(PRECISION);
-	auto vars = m_calculator.GetVars();
+	auto fn = CreateFnToPrintValue(out);
 
-	for (auto var : vars)
+	m_calculator.ExecuteFnToAllVars(fn);
+}
+
+void CommandParser::PrintFnsCommand(std::ostream& out) const
+{
+	out << std::fixed << std::setprecision(PRECISION);
+	auto fn = CreateFnToPrintValue(out);
+
+	m_calculator.ExecuteFnToAllFncs(fn);
+}
+
+void CommandParser::CheckIdentifierWithReservedWords(const std::string& identifier) const
+{
+	std::set<std::string> ReservedWords = {
+	VAR_COMMAND, LET_COMMAND, PRINT_COMMAND, PRINTVARS_COMMAND, PRINTFNS_COMMAND};
+
+	if (ReservedWords.contains(identifier))
 	{
-		out << var.first << ":" << std::stod(var.second) << "\n";
+		throw std::invalid_argument("Identifier has already been reserved");
 	}
 }
 
-void CommandParser::PrintFnsCommand(std::ostream& out)
+std::function<void(std::string, double)> CommandParser::CreateFnToPrintValue(std::ostream& out) const
 {
-	out << std::fixed << std::setprecision(PRECISION);
-	auto fncs = m_calculator.GetFuncs();
-
-	for (auto fn : fncs)
+	auto fn = [&out](std::string identifier, double value)
 	{
-		out << fn.first << ":" << std::stod(fn.second.Execute(m_calculator.GetVars(), fncs)) << "\n";
-	}
+		out << identifier << ":" << value << "\n";
+	};
+
+	return fn;
 }

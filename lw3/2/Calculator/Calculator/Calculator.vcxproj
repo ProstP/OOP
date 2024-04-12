@@ -152,7 +152,6 @@
     <ClInclude Include="Calculator.h" />
     <ClInclude Include="CommandParser.h" />
     <ClInclude Include="Commands.h" />
-    <ClInclude Include="UndefinedValue.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="Operations.h" />
   </ItemGroup>

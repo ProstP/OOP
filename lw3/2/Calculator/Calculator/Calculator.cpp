@@ -1,12 +1,6 @@
 #include "Calculator.h"
 #include "Commands.h"
-#include "UndefinedValue.h"
 #include <string>
-
-Calculator::Calculator()
-{
-	m_usedIdentifiers = { VAR_COMMAND, LET_COMMAND, FN_COMMAND, PRINT_COMMAND, PRINTVARS_COMMAND, PRINTFNS_COMMAND };
-}
 
 void Calculator::Var(const std::string& identifier)
 {
@@ -14,10 +8,10 @@ void Calculator::Var(const std::string& identifier)
 	{
 		throw std::invalid_argument("Identifier already used");
 	}
-	m_vars[identifier] = UNDEFINED_VALUE;
+	m_vars[identifier] = NAN;
 }
 
-void Calculator::Let(const std::string& identifier, std::string value)
+void Calculator::Let(const std::string& identifier, const std::string& value)
 {
 	if (!m_vars.contains(identifier))
 	{
@@ -30,61 +24,81 @@ void Calculator::Let(const std::string& identifier, std::string value)
 	}
 	if (m_funcs.contains(value))
 	{
-		m_vars[identifier] = m_funcs.at(value).Execute(m_vars, m_funcs);
+		auto GetValue = CreateFnGetValueByIdentifier();
+		m_vars[identifier] = m_funcs.at(value).Execute(GetValue);
 		return;
 	}
 	try
 	{
-		std::stod(value);
+		double result = std::stod(value);
+		m_vars[identifier] = result;
 	}
 	catch (...)
 	{
-		throw std::invalid_argument("Value must be digit or var");
+		throw std::invalid_argument("Invalid value");
 	}
-	m_vars[identifier] = value;
 }
 
-void Calculator::Fn(
-	const std::string& identifier,
-	const std::string& firstIdentifier,
-	const Operations& operation,
-	const std::string& secondIdentifier)
+void Calculator::FnUnary(const std::string& identifier, const std::string valueIdentifier)
 {
 	if (IsIdentifierUsing(identifier))
 	{
 		throw std::invalid_argument("Identifier already used");
 	}
-	if (!IsIdentifierUsing(firstIdentifier) || (!secondIdentifier.empty() && !IsIdentifierUsing(secondIdentifier)))
+	if (!IsIdentifierUsing(valueIdentifier))
+	{
+		throw std::invalid_argument("Unknown argument");
+	}
+
+	Function func(valueIdentifier);
+	m_funcs[identifier] = func;
+}
+
+void Calculator::FnBinary(const std::string& identifier, const std::string& firstIdentifier, const Operations& operation, const std::string& secondIdentifier)
+{
+	if (IsIdentifierUsing(identifier))
+	{
+		throw std::invalid_argument("Identifier already used");
+	}
+	if (!IsIdentifierUsing(firstIdentifier) || !IsIdentifierUsing(secondIdentifier))
 	{
 		throw std::invalid_argument("Unknown argument");
 	}
 	Function func(firstIdentifier, operation, secondIdentifier);
-	m_usedIdentifiers.insert(identifier);
 	m_funcs[identifier] = func;
 }
 
-double Calculator::Print(const std::string& identifier)
+double Calculator::GetValueByIdentifier(std::string identifier) const
 {
 	if (m_vars.contains(identifier))
 	{
-		return std::stod(m_vars.at(identifier));
+		return m_vars.at(identifier);
 	}
 	if (m_funcs.contains(identifier))
 	{
-		return std::stod(m_funcs.at(identifier).Execute(m_vars, m_funcs));
+		auto GetValue = CreateFnGetValueByIdentifier();
+		return m_funcs.at(identifier).Execute(GetValue);
 	}
 
 	throw std::runtime_error("Unknown identifier");
 }
 
-std::map<std::string, std::string> Calculator::GetVars()
+void Calculator::ExecuteFnToAllVars(std::function<void(std::string, double)>& fn) const
 {
-	return m_vars;
+	for (auto& [identifier, value] : m_vars)
+	{
+		fn(identifier, value);
+	}
 }
 
-std::map<std::string, Function> Calculator::GetFuncs()
+void Calculator::ExecuteFnToAllFncs(std::function<void(std::string, double)>& fn) const
 {
-	return m_funcs;
+	auto GetValue = CreateFnGetValueByIdentifier();
+
+	for (auto& [identifier, func] : m_funcs)
+	{
+		fn(identifier, func.Execute(GetValue));
+	}
 }
 
 bool Calculator::IsIdentifierUsing(const std::string& identifier)
@@ -97,9 +111,15 @@ bool Calculator::IsIdentifierUsing(const std::string& identifier)
 	{
 		return true;
 	}
-	if (m_usedIdentifiers.contains(identifier))
-	{
-		return true;
-	}
 	return false;
+}
+
+std::function<double(std::string)> Calculator::CreateFnGetValueByIdentifier() const
+{
+	auto fn = [&](std::string identifier)
+	{
+		return GetValueByIdentifier(identifier);
+	};
+
+	return fn;
 }

@@ -165,7 +165,9 @@
     <ClInclude Include="..\Calculator\CommandParser.h" />
     <ClInclude Include="..\Calculator\Function.h" />
     <ClInclude Include="..\Calculator\Operations.h" />
-    <ClInclude Include="..\Calculator\UndefinedValue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
