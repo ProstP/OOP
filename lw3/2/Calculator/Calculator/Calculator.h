@@ -9,9 +9,9 @@ class Calculator
 public:
 	void Var(const std::string& identifier);
 	void Let(const std::string& identifier, const std::string& value);
-	void FnUnary(const std::string& identifier, const std::string valueIdentifier);
+	void FnUnary(const std::string& identifier, const std::string& valueIdentifier);
 	void FnBinary(const std::string& identifier, const std::string& firstIdentifier, const Operations& operation, const std::string& secondIdentifier);
-	double GetValueByIdentifier(std::string identifier) const;
+	double GetValueByIdentifier(const std::string& identifier) const;
 	void ExecuteFnToAllVars(std::function<void(std::string, double)>& fn) const;
 	void ExecuteFnToAllFncs(std::function<void(std::string, double)>& fn) const;
 

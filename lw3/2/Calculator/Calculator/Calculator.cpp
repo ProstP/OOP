@@ -39,7 +39,7 @@ void Calculator::Let(const std::string& identifier, const std::string& value)
 	}
 }
 
-void Calculator::FnUnary(const std::string& identifier, const std::string valueIdentifier)
+void Calculator::FnUnary(const std::string& identifier, const std::string& valueIdentifier)
 {
 	if (IsIdentifierUsing(identifier))
 	{
@@ -68,7 +68,7 @@ void Calculator::FnBinary(const std::string& identifier, const std::string& firs
 	m_funcs[identifier] = func;
 }
 
-double Calculator::GetValueByIdentifier(std::string identifier) const
+double Calculator::GetValueByIdentifier(const std::string& identifier) const
 {
 	if (m_vars.contains(identifier))
 	{

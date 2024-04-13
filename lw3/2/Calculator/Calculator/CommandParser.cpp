@@ -4,11 +4,13 @@
 #include <string>
 #include <set>
 
-const int PRECISION = 2;
+namespace {
+	const int PRECISION = 2;
+}
 
 CommandParser::CommandParser(Calculator& calculator)
+	: m_calculator(calculator)
 {
-	m_calculator = calculator;
 }
 
 void CommandParser::Handle(std::istream& in, std::ostream& out)
@@ -54,7 +56,7 @@ void CommandParser::DefineCommand(const std::string& str, std::ostream& out)
 	else if (str.find(LET_COMMAND) != std::string::npos)
 	{
 		std::smatch match;
-		ParseCommand(std::regex("^(let)\\s+([A-Za-z]\\w*)\\s*=\\s*([\\w\.]+)$"), match, str);
+		ParseCommand(std::regex("^(let)\\s+([A-Za-z]\\w*)\\s*=\\s*([\\-?\\w\.]+)$"), match, str);
 		LetCommand(match[2].str(), match[3].str());
 	}
 	else if (str.find(FN_COMMAND) != std::string::npos)
@@ -118,7 +120,16 @@ void CommandParser::PrintCommand(const std::string& identifier, std::ostream& ou
 {
 	out << std::fixed << std::setprecision(PRECISION);
 
-	out << m_calculator.GetValueByIdentifier(identifier) << "\n";
+	double value = m_calculator.GetValueByIdentifier(identifier);
+	if (std::isnan(value))
+	{
+		out << "Nan";
+	}
+	else
+	{
+		out << value;
+	}
+	out << std::endl;
 }
 
 void CommandParser::PrintVarsCommand(std::ostream& out) const
@@ -152,7 +163,16 @@ std::function<void(std::string, double)> CommandParser::CreateFnToPrintValue(std
 {
 	auto fn = [&out](std::string identifier, double value)
 	{
-		out << identifier << ":" << value << "\n";
+		out << identifier << ":";
+		if (std::isnan(value))
+		{
+			out << "Nan";
+		}
+		else
+		{
+			out << value;
+		}
+		out << std::endl;
 	};
 
 	return fn;
