@@ -1,34 +1,34 @@
-<mxfile host="app.diagrams.net" modified="2024-04-12T13:28:10.232Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0" etag="RHQLWr1x3Ltq0FlaDGwL" version="24.2.2" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-13T04:46:37.319Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0" etag="3RXMBYpM3bSxRn08lkXn" version="24.2.3" type="github">
   <diagram name="Страница — 1" id="zmgtW91jnbgeaFKCYOSO">
-    <mxGraphModel dx="696" dy="374" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1009" dy="542" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="2Z1-PzTLdNv5fBvtSNIb-6" value="&lt;table border=&quot;1&quot; width=&quot;100%&quot; height=&quot;100%&quot; cellpadding=&quot;4&quot; style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;&lt;b&gt;CommandParser&lt;/b&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- m_calculator Calculator&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;+ Handle(in : istream, out : ostream) : void&lt;br&gt;- DefineCommand(str :string, out :ostream) : void&lt;br&gt;- ParseCommand(pattern : regex, match : smatch, command : string) : void&lt;br&gt;-&amp;nbsp;VarCommand(identifier : string) : void&lt;br&gt;-&amp;nbsp;LetCommand(identifier : string, value : string) : void&lt;br&gt;- FnCommand(identifier : string, arg1 : string, operation : string, arg2 : string) : void&lt;br&gt;- PrintCommand(identifier : string, out : ostream) : void&lt;br&gt;-&amp;nbsp;PrintVarsCommand(out : ostream) : void&lt;br&gt;-&amp;nbsp;PrintFnsCommand(out : ostream)&lt;br&gt;-&amp;nbsp;CheckIdentifierWithReservedWords(identifier : string) : void&lt;br&gt;- CreateFnToPrintValue(out : ostream) : function&amp;lt;void(string, double)&amp;gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;overflow=fill;align=left;" parent="1" vertex="1">
           <mxGeometry x="60" y="10" width="450" height="220" as="geometry" />
         </mxCell>
-        <mxCell id="2Z1-PzTLdNv5fBvtSNIb-8" value="&lt;table border=&quot;1&quot; width=&quot;100%&quot; height=&quot;100%&quot; cellpadding=&quot;4&quot; style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;&lt;b&gt;Calculator&lt;/b&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- m_vars map&amp;lt;string, string&amp;gt;&lt;br&gt;- m_funcs map&amp;lt;string, Function&amp;gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;+ Var(identifier : string) : void&lt;br&gt;+ Let(identifier : string, value : string) : void&lt;br&gt;+ FnUnary(identifier : string, valueIdentifier : string) : void&lt;br&gt;+ FnBinary(identifier : string, firstIdentifier : strng, operation : Operation, secondIdentifier : string) : void&lt;br&gt;+ GetValueByIdentifier(identifier : string) : double&lt;br&gt;+&amp;nbsp;ExecuteFnToAllVars(fn : function&amp;lt;void(string, double)&amp;gt;) : void&lt;br&gt;+ ExecuteFnToAllFncs(fn : function&amp;lt;void(string, double)&amp;gt;) : void&lt;br&gt;-&amp;nbsp;IsIdentifierUsing(identifier : string) : bool&lt;br&gt;-&amp;nbsp;CreateFnGetValueByIdentifier() : function&amp;lt;double(string)&amp;gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;overflow=fill;align=left;" parent="1" vertex="1">
+        <mxCell id="2Z1-PzTLdNv5fBvtSNIb-8" value="&lt;table border=&quot;1&quot; width=&quot;100%&quot; height=&quot;100%&quot; cellpadding=&quot;4&quot; style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;&lt;b&gt;Calculator&lt;/b&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- m_vars map&amp;lt;string, string&amp;gt;&lt;br&gt;- m_funcs map&amp;lt;string, Function&amp;gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;+ Var(identifier : string) : void&lt;br&gt;+ Let(identifier : string, value : string) : void&lt;br&gt;+ FnUnary(identifier : string, valueIdentifier : string) : void&lt;br&gt;+ FnBinary(identifier : string, firstIdentifier : strng, operation : Operation, secondIdentifier : string) : void&lt;br&gt;+ GetValueByIdentifier(identifier : string) : double&lt;br&gt;+&amp;nbsp;ExecuteFnToAllVars(fn : function&amp;lt;void(string, double)&amp;gt;) : void&lt;br&gt;+ ExecuteFnToAllFncs(fn : function&amp;lt;void(string, double)&amp;gt;) : void&lt;br&gt;-&amp;nbsp;IsIdentifierUsing(identifier : string) : bool&lt;br&gt;-&amp;nbsp;CreateFnToGetValueByIdentifier() : function&amp;lt;double(string)&amp;gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;overflow=fill;align=left;" parent="1" vertex="1">
           <mxGeometry x="60" y="290" width="560" height="210" as="geometry" />
         </mxCell>
         <mxCell id="2Z1-PzTLdNv5fBvtSNIb-9" value="&lt;table border=&quot;1&quot; width=&quot;100%&quot; height=&quot;100%&quot; cellpadding=&quot;4&quot; style=&quot;width:100%;height:100%;border-collapse:collapse;&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th&gt;&lt;b&gt;Function&lt;/b&gt;&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;- m_identifiers : vector&amp;lt;string&amp;gt;&lt;br&gt;- operation : Operation&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;+ Execute(GetValue : function&amp;lt;double(string)&amp;gt;) : double&lt;br&gt;-&amp;nbsp;CalculateOperationResult(firstArg : double, secondArg : double) : double&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;overflow=fill;align=left;" parent="1" vertex="1">
           <mxGeometry x="60" y="570" width="580" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="iItc6VaSdW1UEh6VPhEj-1" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.176;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="iItc6VaSdW1UEh6VPhEj-2">
+        <mxCell id="iItc6VaSdW1UEh6VPhEj-1" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.176;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="iItc6VaSdW1UEh6VPhEj-2" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="160" y="230" as="sourcePoint" />
             <mxPoint x="160.32000000000005" y="288.28999999999996" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="iItc6VaSdW1UEh6VPhEj-3" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.176;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="iItc6VaSdW1UEh6VPhEj-4">
+        <mxCell id="iItc6VaSdW1UEh6VPhEj-3" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.176;entryY=-0.009;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="iItc6VaSdW1UEh6VPhEj-4" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="220" y="540" as="sourcePoint" />
             <mxPoint x="159.66" y="568" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="iItc6VaSdW1UEh6VPhEj-4" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#000000;" vertex="1" parent="1">
+        <mxCell id="iItc6VaSdW1UEh6VPhEj-4" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#000000;" parent="1" vertex="1">
           <mxGeometry x="150" y="500" width="20" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="iItc6VaSdW1UEh6VPhEj-2" value="" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="iItc6VaSdW1UEh6VPhEj-2" value="" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="150" y="230" width="20" height="30" as="geometry" />
         </mxCell>
       </root>
