@@ -24,7 +24,7 @@
     <ClCompile Include="CSphere.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Parallelepiped.cpp">
+    <ClCompile Include="СParallelepiped.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="CCone.cpp">
@@ -44,7 +44,7 @@
     <ClInclude Include="PiNumber.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Parallelepiped.h">
+    <ClInclude Include="СParallelepiped.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="CCone.h">

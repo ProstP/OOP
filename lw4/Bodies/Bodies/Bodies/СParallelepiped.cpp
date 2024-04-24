@@ -1,22 +1,22 @@
-#include "Parallelepiped.h"
+#include "ÑParallelepiped.h"
 #include <string>
 
-double Parallelepiped::GetWidth() const
+double ÑParallelepiped::GetWidth() const
 {
 	return m_width;
 }
 
-double Parallelepiped::GetHeight() const
+double ÑParallelepiped::GetHeight() const
 {
 	return m_height;
 }
 
-double Parallelepiped::GetDepth() const
+double ÑParallelepiped::GetDepth() const
 {
 	return m_depth;
 }
 
-std::string Parallelepiped::ToString() const
+std::string ÑParallelepiped::ToString() const
 {
 	std::string bodyStr = CBody::ToString();
 	bodyStr = bodyStr + "Width: " + std::to_string(m_width) + "\n";

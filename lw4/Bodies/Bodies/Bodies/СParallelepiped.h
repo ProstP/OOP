@@ -1,10 +1,10 @@
 #pragma once
 #include "CBody.h"
 
-class Parallelepiped : CBody
+class ÑParallelepiped : public CBody
 {
 public:
-	Parallelepiped(double density, double width, double height, double depth)
+	ÑParallelepiped(double density, double width, double height, double depth)
 		: CBody(density, width * height * depth)
 		, m_width{ width }
 		, m_height{ height }
@@ -13,6 +13,7 @@ public:
 	double GetHeight() const;
 	double GetDepth() const;
 	std::string ToString() const override;
+	~ÑParallelepiped() override = default;
 
 private:
 	double m_width;

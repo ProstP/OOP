@@ -12,6 +12,7 @@ public:
 	double GetVolume() const;
 	double GetMass() const;
 	virtual std::string ToString() const;
+	virtual ~CBody() = default;
 
 private:
 	double m_density;

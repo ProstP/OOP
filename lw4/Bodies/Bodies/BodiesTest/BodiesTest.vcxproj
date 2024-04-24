@@ -152,10 +152,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Bodies\CBody.cpp" />
+    <ClCompile Include="..\Bodies\CCone.cpp" />
+    <ClCompile Include="..\Bodies\CCylinder.cpp" />
+    <ClCompile Include="..\Bodies\CSphere.cpp" />
+    <ClCompile Include="..\Bodies\СParallelepiped.cpp" />
     <ClCompile Include="BodiesTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Bodies\CBody.h" />
+    <ClInclude Include="..\Bodies\CCone.h" />
+    <ClInclude Include="..\Bodies\CCylinder.h" />
+    <ClInclude Include="..\Bodies\CSphere.h" />
+    <ClInclude Include="..\Bodies\PiNumber.h" />
+    <ClInclude Include="..\Bodies\СParallelepiped.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

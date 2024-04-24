@@ -144,14 +144,14 @@
     <ClCompile Include="CCylinder.cpp" />
     <ClCompile Include="CSphere.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Parallelepiped.cpp" />
+    <ClCompile Include="СParallelepiped.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CBody.h" />
     <ClInclude Include="CCone.h" />
     <ClInclude Include="CCylinder.h" />
     <ClInclude Include="CSphere.h" />
-    <ClInclude Include="Parallelepiped.h" />
+    <ClInclude Include="СParallelepiped.h" />
     <ClInclude Include="PiNumber.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
