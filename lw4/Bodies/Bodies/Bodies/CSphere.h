@@ -1,13 +1,13 @@
 #pragma once
-#include "CBody.h"
-#include "PiNumber.h"
+#include "CSolidBody.h"
 
-class CSphere : public CBody
+class CSphere : public CSolidBody
 {
 public:
 	CSphere(double density, double radius)
-		: CBody(density, 4 * Pi * radius * radius * radius / 3)
+		: CSolidBody(density)
 		, m_radius{ radius } {};
+	double GetVolume() const override;
 	double GetRadius() const;
 	std::string ToString() const override;
 	~CSphere() override = default;

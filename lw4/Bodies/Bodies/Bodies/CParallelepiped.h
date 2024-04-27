@@ -1,19 +1,20 @@
 #pragma once
-#include "CBody.h"
+#include "CSolidBody.h"
 
-class ÑParallelepiped : public CBody
+class CParallelepiped : public CSolidBody
 {
 public:
-	ÑParallelepiped(double density, double width, double height, double depth)
-		: CBody(density, width * height * depth)
+	CParallelepiped(double density, double width, double height, double depth)
+		: CSolidBody(density)
 		, m_width{ width }
 		, m_height{ height }
 		, m_depth{ depth } {};
+	double GetVolume() const override;
 	double GetWidth() const;
 	double GetHeight() const;
 	double GetDepth() const;
 	std::string ToString() const override;
-	~ÑParallelepiped() override = default;
+	~CParallelepiped() override = default;
 
 private:
 	double m_width;

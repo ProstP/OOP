@@ -88,6 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -105,6 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,6 +124,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +142,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,20 +155,24 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Bodies\BodyStore.cpp" />
     <ClCompile Include="..\Bodies\CBody.cpp" />
+    <ClCompile Include="..\Bodies\CCompound.cpp" />
     <ClCompile Include="..\Bodies\CCone.cpp" />
     <ClCompile Include="..\Bodies\CCylinder.cpp" />
+    <ClCompile Include="..\Bodies\CParallelepiped.cpp" />
     <ClCompile Include="..\Bodies\CSphere.cpp" />
-    <ClCompile Include="..\Bodies\СParallelepiped.cpp" />
     <ClCompile Include="BodiesTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Bodies\BodyStore.h" />
     <ClInclude Include="..\Bodies\CBody.h" />
+    <ClInclude Include="..\Bodies\CCompound.h" />
     <ClInclude Include="..\Bodies\CCone.h" />
     <ClInclude Include="..\Bodies\CCylinder.h" />
+    <ClInclude Include="..\Bodies\CParallelepiped.h" />
     <ClInclude Include="..\Bodies\CSphere.h" />
-    <ClInclude Include="..\Bodies\PiNumber.h" />
-    <ClInclude Include="..\Bodies\СParallelepiped.h" />
+    <ClInclude Include="..\Bodies\Data.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

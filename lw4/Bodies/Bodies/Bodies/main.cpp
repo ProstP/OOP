@@ -1,6 +1,9 @@
-﻿#include <iostream>
+﻿#include "CommandParser.h"
+#include <iostream>
 
 int main()
 {
-	std::cout << "Hello World!\n";
+	BodyStore store;
+	CommandParser parser(store);
+	parser.Handle(std::cin, std::cout);
 }

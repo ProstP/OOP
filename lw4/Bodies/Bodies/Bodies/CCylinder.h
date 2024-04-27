@@ -1,14 +1,14 @@
 #pragma once
-#include "CBody.h"
-#include "PiNumber.h"
+#include "CSolidBody.h"
 
-class CCylinder : public CBody
+class CCylinder : public CSolidBody
 {
 public:
 	CCylinder(double density, double baseRadius, double height)
-		: CBody(density, Pi * baseRadius * baseRadius * height)
+		: CSolidBody(density)
 		, m_baseRadius{ baseRadius }
 		, m_height{ height } {};
+	double GetVolume() const override;
 	double GetBaseRadius() const;
 	double GetHeight() const;
 	std::string ToString() const override;

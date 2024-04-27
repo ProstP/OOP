@@ -30,7 +30,13 @@
     <ClCompile Include="..\Bodies\CSphere.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Bodies\СParallelepiped.cpp">
+    <ClCompile Include="..\Bodies\CCompound.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bodies\BodyStore.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Bodies\CParallelepiped.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,10 +53,16 @@
     <ClInclude Include="..\Bodies\CSphere.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\Bodies\СParallelepiped.h">
+    <ClInclude Include="..\Bodies\CCompound.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="..\Bodies\PiNumber.h">
+    <ClInclude Include="..\Bodies\BodyStore.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bodies\CParallelepiped.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bodies\Data.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
