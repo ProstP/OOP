@@ -15,9 +15,9 @@ CParallelepiped::CParallelepiped(double density, double width, double height, do
 
 double CParallelepiped::GetVolume() const
 {
-	if (m_width < 1 || m_height < 1 || m_depth < 1)
+	if (m_width > DBL_MAX / m_height / m_depth)
 	{
-		throw std::invalid_argument("Data of parallelipiped must be positive\n");
+		throw std::out_of_range("Volume exceeded acceptable value\n");
 	}
 	return m_width * m_height * m_depth;
 }

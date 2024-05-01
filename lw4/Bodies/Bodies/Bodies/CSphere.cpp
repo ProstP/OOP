@@ -14,9 +14,9 @@ CSphere::CSphere(double density, double radius)
 
 double CSphere::GetVolume() const
 {
-	if (m_radius < 1)
+	if (m_radius > DBL_MAX / m_radius / m_radius / Pi * 3)
 	{
-		throw std::invalid_argument("Radius must be positive\n");
+		throw std::out_of_range("Volume exceeded acceptable value\n");
 	}
 	return 4 * Pi * m_radius * m_radius * m_radius / 3;
 }

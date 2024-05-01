@@ -15,9 +15,9 @@ CCylinder::CCylinder(double density, double baseRadius, double height)
 
 double CCylinder::GetVolume() const
 {
-	if (m_baseRadius < 1 || m_height < 1)
+	if (m_baseRadius > DBL_MAX / Pi / m_baseRadius / m_height)
 	{
-		throw std::invalid_argument("Data of cylinder must be positive\n");
+		throw std::out_of_range("Volume exceeded acceptable value\n");
 	}
 	return Pi * m_baseRadius * m_baseRadius * m_height;
 }

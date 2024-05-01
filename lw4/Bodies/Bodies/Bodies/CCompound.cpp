@@ -28,6 +28,10 @@ double CCompound::GetVolume() const
 
 	for (const auto& body : m_bodies)
 	{
+		if (value > DBL_MAX - body->GetVolume())
+		{
+			throw std::out_of_range("Volume exceeded acceptable value\n");
+		}
 		value += body->GetVolume();
 	}
 
@@ -40,6 +44,10 @@ double CCompound::GetMass() const
 
 	for (const auto& body : m_bodies)
 	{
+		if (value > DBL_MAX - body->GetMass())
+		{
+			throw std::out_of_range("Mass exceeded acceptable value\n");
+		}
 		value += body->GetMass();
 	}
 

@@ -17,6 +17,10 @@ double CSolidBody::GetDensity() const
 
 double CSolidBody::GetMass() const
 {
+    if (GetDensity() > DBL_MAX / GetVolume())
+    {
+        throw std::out_of_range("Mass exceeded acceptable value\n");
+    }
     return GetDensity() * GetVolume();
 }
 

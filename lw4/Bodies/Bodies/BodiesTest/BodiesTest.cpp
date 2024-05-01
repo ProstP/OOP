@@ -49,6 +49,24 @@ TEST_CASE("Creating bodies")
 		}
 	}
 
+	WHEN("Mass exceeded max double value")
+	{
+		CSphere sphere(DBL_MAX, 500);
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(sphere.GetMass(), "Mass exceeded acceptable value\n");
+		}
+	}
+
+	WHEN("Volume exceeded max double value")
+	{
+		CSphere sphere(500, DBL_MAX);
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(sphere.GetVolume(), "Volume exceeded acceptable value\n");
+		}
+	}
+
 	WHEN("Error radius not positive")
 	{
 		auto fn = []()
@@ -87,6 +105,15 @@ TEST_CASE("Creating bodies")
 		}
 	}
 
+	WHEN("Volume exceeded max double value")
+	{
+		CParallelepiped parallelepiped(500, DBL_MAX / 100, 6000, 2200);
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(parallelepiped.GetVolume(), "Volume exceeded acceptable value\n");
+		}
+	}
+
 	WHEN("Error parallelipiped parameters not positive")
 	{
 		auto fn = []()
@@ -122,6 +149,15 @@ TEST_CASE("Creating bodies")
 		}
 	}
 
+	WHEN("Volume exceeded max double value")
+	{
+		CCylinder cylinder(500, DBL_MAX / 100, 5000);
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(cylinder.GetVolume(), "Volume exceeded acceptable value\n");
+		}
+	}
+
 	WHEN("Error cylinder parameters not positive")
 	{
 		auto fn = []()
@@ -154,6 +190,15 @@ TEST_CASE("Creating bodies")
 			CHECK(baseRadius == cone.GetBaseRadius());
 			CHECK(height == cone.GetHeight());
 			CHECK(bodyStr == cone.ToString());
+		}
+	}
+
+	WHEN("Volume exceeded max double value")
+	{
+		CCone cone(500, DBL_MAX / 100, 5000);
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(cone.GetVolume(), "Volume exceeded acceptable value\n");
 		}
 	}
 
@@ -274,11 +319,58 @@ TEST_CASE("Creating bodies")
 			CHECK(ptr->GetMass() == 0);
 		}
 	}
+
+	WHEN("Sum volume excedeed max double value")
+	{
+		CParallelepiped body(500, DBL_MAX / 10, 2, 2);
+		CCompound compound;
+		std::shared_ptr<CCompound> ptr = std::make_shared<CCompound>(compound);
+		ptr->AddChildSolidBody(std::make_shared<CParallelepiped>(body));
+		ptr->AddChildSolidBody(std::make_shared<CParallelepiped>(body));
+		ptr->AddChildSolidBody(std::make_shared<CParallelepiped>(body));
+		THEN("Will trow exception")
+		{
+			CHECK_THROWS_WITH(ptr->GetVolume(), "Volume exceeded acceptable value\n");
+		}
+	}
+
+	WHEN("Sum mass excedeed max double value")
+	{
+		CParallelepiped body(DBL_MAX / 3, 10, 2, 2);
+		CCompound compound;
+		std::shared_ptr<CCompound> ptr = std::make_shared<CCompound>(compound);
+		ptr->AddChildSolidBody(std::make_shared<CParallelepiped>(body));
+		ptr->AddChildSolidBody(std::make_shared<CParallelepiped>(body));
+		ptr->AddChildSolidBody(std::make_shared<CParallelepiped>(body));
+		ptr->AddChildSolidBody(std::make_shared<CParallelepiped>(body));
+		THEN("Will trow exception")
+		{
+			CHECK_THROWS_WITH(ptr->GetMass(), "Mass exceeded acceptable value\n");
+		}
+	}
 }
-/*
+
 TEST_CASE("Test store methods")
 {
 	BodyStore store;
+
+	WHEN("Get all bodies in string with fn")
+	{
+		store.CreateCone(5, 5, 5);
+		CCone cone(5, 5, 5);
+		store.CreateSphere(5, 2);
+		CSphere sphere(5, 2);
+		auto ptr = store.CreateCompound();
+		CCone cone1(5, 2, 5);
+		ptr->AddChildSolidBody(std::make_shared<CCone>(cone1));
+		std::string str = cone.ToString() + sphere.ToString() + ptr->ToString();
+		std::string result;
+		auto fn = []
+		THEN("Str will contain info about bodies")
+		{
+			CHECK(str == store.);
+		}
+	}
 
 	WHEN("Find body with max mass")
 	{
@@ -300,4 +392,3 @@ TEST_CASE("Test store methods")
 		CHECK(body->GetDensity() == 800);
 	}
 }
-*/

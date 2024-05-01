@@ -15,9 +15,9 @@ CCone::CCone(double density, double baseRadius, double height)
 
 double CCone::GetVolume() const
 {
-	if (m_baseRadius < 1 || m_height < 1)
+	if (m_baseRadius > DBL_MAX / m_baseRadius / m_height * 3)
 	{
-		throw std::invalid_argument("Data of cone must be positive\n");
+		throw std::out_of_range("Volume exceeded acceptable value\n");
 	}
 	return Pi * m_baseRadius * m_baseRadius * m_height / 3;
 }
