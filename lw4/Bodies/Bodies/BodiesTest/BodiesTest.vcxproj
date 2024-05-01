@@ -161,6 +161,7 @@
     <ClCompile Include="..\Bodies\CCone.cpp" />
     <ClCompile Include="..\Bodies\CCylinder.cpp" />
     <ClCompile Include="..\Bodies\CParallelepiped.cpp" />
+    <ClCompile Include="..\Bodies\CSolidBody.cpp" />
     <ClCompile Include="..\Bodies\CSphere.cpp" />
     <ClCompile Include="BodiesTest.cpp" />
   </ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="..\Bodies\CCone.h" />
     <ClInclude Include="..\Bodies\CCylinder.h" />
     <ClInclude Include="..\Bodies\CParallelepiped.h" />
+    <ClInclude Include="..\Bodies\CSolidBody.h" />
     <ClInclude Include="..\Bodies\CSphere.h" />
     <ClInclude Include="..\Bodies\Data.h" />
   </ItemGroup>

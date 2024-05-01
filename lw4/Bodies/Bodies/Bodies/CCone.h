@@ -4,14 +4,11 @@
 class CCone : public CSolidBody
 {
 public:
-	CCone(double density, double baseRadius, double height)
-		: CSolidBody(density)
-		, m_baseRadius{ baseRadius }
-		, m_height{ height } {};
+	CCone(double density, double baseRadius, double height);
 	double GetVolume() const override;
 	double GetBaseRadius() const;
 	double GetHeight() const;
-	std::string ToString() const override;
+	std::string ToString(const std::string& indent = "") const override;
 	~CCone() override = default;
 
 private:

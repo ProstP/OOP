@@ -2,6 +2,16 @@
 #include <string>
 #include "Data.h"
 
+CSphere::CSphere(double density, double radius)
+	: CSolidBody(density)
+	, m_radius{ radius }
+{
+	if (m_radius < 1)
+	{
+		throw std::invalid_argument("The body parameters must be positive\n");
+	}
+}
+
 double CSphere::GetVolume() const
 {
 	if (m_radius < 1)
@@ -16,11 +26,11 @@ double CSphere::GetRadius() const
 	return m_radius;
 }
 
-std::string CSphere::ToString() const
+std::string CSphere::ToString(const std::string& indent) const
 {
-	std::string bodyStr = "\n<Sphere\n";
-	bodyStr += CBody::ToString();
-	bodyStr = bodyStr + "Radius: " + std::to_string(m_radius) + "\n";
-	bodyStr += "/Sphere>\n\n";
+	std::string bodyStr = "\n" + indent + "<Sphere\n";
+	bodyStr += CSolidBody::ToString(indent);
+	bodyStr = bodyStr + indent + "Radius: " + std::to_string(m_radius) + "\n";
+	bodyStr = bodyStr + indent + "/Sphere>\n\n";
 	return bodyStr;
 }

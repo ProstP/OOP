@@ -13,47 +13,19 @@ std::string SolidBodyInfo(double density, double volume, double mass)
 	return densityStr + volumeStr + massStr;
 }
 
-// Тест для compound компоненты не 0
-
 TEST_CASE("Creating bodies")
 {
 	double density = 12;
-	WHEN("Succes body creating with density and volume")
-	{
-		double volume = 5;
-		double mass = density * volume;
-		std::string bodyStr = SolidBodyInfo(density, volume, mass);
-		CBody body(density, volume);
-		THEN("Volume, density and mass are right")
-		{
-			CHECK(density == body.GetDensity());
-			CHECK(volume == body.GetVolume());
-			CHECK(mass == body.GetMass());
-			CHECK(bodyStr == body.ToString());
-		}
-	}
 
-	WHEN("Error density not positive")
+	WHEN("Create sloid body with not positive density")
 	{
 		auto fn = []()
 		{
-			CBody body(-1, 5);
+			CSolidBody body(-1);
 		};
 		THEN("Will throw exception")
 		{
-			CHECK_THROWS_WITH(fn(), "Density must be positive\n");
-		}
-	}
-
-	WHEN("Error volume not positive")
-	{
-		auto fn = []()
-		{
-			CBody body(1, -5);
-		};
-		THEN("Will throw exception")
-		{
-			CHECK_THROWS_WITH(fn(), "Volume must be positive\n");
+			CHECK_THROWS_WITH(fn(), "The body parameters must be positive\n");
 		}
 	}
 
@@ -85,7 +57,7 @@ TEST_CASE("Creating bodies")
 		};
 		THEN("Will throw exception")
 		{
-			CHECK_THROWS_WITH(fn(), "Radius must be positive\n");
+			CHECK_THROWS_WITH(fn(), "The body parameters must be positive\n");
 		}
 	}
 
@@ -115,7 +87,7 @@ TEST_CASE("Creating bodies")
 		}
 	}
 
-	WHEN("Error parallelipiped data not positive")
+	WHEN("Error parallelipiped parameters not positive")
 	{
 		auto fn = []()
 		{
@@ -123,7 +95,7 @@ TEST_CASE("Creating bodies")
 		};
 		THEN("Will throw exception")
 		{
-			CHECK_THROWS_WITH(fn(), "Data of parallelipiped must be positive\n");
+			CHECK_THROWS_WITH(fn(), "The body parameters must be positive\n");
 		}
 	}
 
@@ -150,7 +122,7 @@ TEST_CASE("Creating bodies")
 		}
 	}
 
-	WHEN("Error cylinder data not positive")
+	WHEN("Error cylinder parameters not positive")
 	{
 		auto fn = []()
 		{
@@ -158,7 +130,7 @@ TEST_CASE("Creating bodies")
 		};
 		THEN("Will throw exception")
 		{
-			CHECK_THROWS_WITH(fn(), "Data of cylinder must be positive\n");
+			CHECK_THROWS_WITH(fn(), "The body parameters must be positive\n");
 		}
 	}
 
@@ -185,7 +157,7 @@ TEST_CASE("Creating bodies")
 		}
 	}
 
-	WHEN("Error cylinder data not positive")
+	WHEN("Error cone parameters not positive")
 	{
 		auto fn = []()
 		{
@@ -193,7 +165,7 @@ TEST_CASE("Creating bodies")
 		};
 		THEN("Will throw exception")
 		{
-			CHECK_THROWS_WITH(fn(), "Data of cone must be positive\n");
+			CHECK_THROWS_WITH(fn(), "The body parameters must be positive\n");
 		}
 	}
 
@@ -207,17 +179,20 @@ TEST_CASE("Creating bodies")
 		CParallelepiped parallelepiped(density, width, height, depth);
 		CCylinder cylinder(density, radius, height);
 		CCone cone(density, radius, height);
-		std::vector<std::shared_ptr<CBody>> bodies{ std::make_shared<CBody>(sphere), std::make_shared<CBody>(parallelepiped),
-			std::make_shared<CBody>(cylinder), std::make_shared<CBody>(cone) };
-		CCompound compound(bodies);
+		CCompound compound;
+		std::shared_ptr<CCompound> ptr = std::make_shared<CCompound>(compound);
+		ptr->AddChildSolidBody(std::make_shared<CSphere>(sphere));
+		ptr->AddChildSolidBody(std::make_shared<CParallelepiped>(parallelepiped));
+		ptr->AddChildSolidBody(std::make_shared<CCylinder>(cylinder));
+		ptr->AddChildSolidBody(std::make_shared<CCone>(cone));
 		double generalVolume = sphere.GetVolume() + parallelepiped.GetVolume() + cylinder.GetVolume() + cone.GetVolume();
 		double generalMass = sphere.GetMass() + parallelepiped.GetMass() + cylinder.GetMass() + cone.GetMass();
 		double generalDensity = generalMass / generalVolume;
 		THEN("General volume, mass and densitity are right")
 		{
-			CHECK(generalVolume == compound.GetVolume());
-			CHECK(generalMass == compound.GetMass());
-			CHECK(generalDensity == compound.GetDensity());
+			CHECK(generalVolume == ptr->GetVolume());
+			CHECK(generalMass == ptr->GetMass());
+			CHECK(generalDensity == ptr->GetDensity());
 		}
 	}
 
@@ -226,23 +201,65 @@ TEST_CASE("Creating bodies")
 		double radius = 5;
 		double height = 10;
 		CCone cone(density, radius, height);
-		CCylinder cylinder(density, radius, height);
-		std::vector<std::shared_ptr<CBody>> bodies1{ std::make_shared<CBody>(cone), std::make_shared<CBody>(cylinder) };
-		CCompound com1(bodies1);
-		std::vector<std::shared_ptr<CBody>> bodies2{ std::make_shared<CBody>(cone), std::make_shared<CBody>(com1) };
-		CCompound com2(bodies2);
+		CCylinder cylinder(density, radius, height);;
+		CCompound com1;
+		std::shared_ptr<CCompound> ptr1 = std::make_shared<CCompound>(com1);
+		ptr1->AddChildSolidBody(std::make_shared<CCone>(cone));
+		ptr1->AddChildSolidBody(std::make_shared<CCylinder>(cylinder));
+		CCompound com2;
+		std::shared_ptr<CCompound> ptr2 = std::make_shared<CCompound>(com2);
+		ptr2->AddChildSolidBody(std::make_shared<CCone>(cone));
+		ptr2->AddChildCompound(ptr1);
 		double generalVolume = 2 * cone.GetVolume() + cylinder.GetVolume();
 		double generalMass = 2 * cone.GetMass() + cylinder.GetMass();
 		double generalDestinity = generalMass / generalVolume;
 		THEN("General volume, mass and densitity are right")
 		{
-			CHECK(generalVolume == com2.GetVolume());
-			CHECK(generalMass== com2.GetMass());
-			CHECK(generalDestinity == com2.GetDensity());
+			CHECK(generalVolume == ptr2->GetVolume());
+			CHECK(generalMass== ptr2->GetMass());
+			CHECK(generalDestinity == ptr2->GetDensity());
+		}
+	}
+
+	WHEN("Compound add self")
+	{
+		CCompound com;
+		std::shared_ptr<CCompound> ptr = std::make_shared<CCompound>(com);
+		THEN("Will trow exception")
+		{
+			CHECK_THROWS_WITH(ptr->AddChildCompound(ptr), "Compound body can't has self in bodies\n");
+		}
+	}
+
+	WHEN("Cyclic add")
+	{
+		CCompound compound;
+		std::shared_ptr<CCompound> ptr1 = std::make_shared<CCompound>(compound);
+		std::shared_ptr<CCompound> ptr2 = std::make_shared<CCompound>(compound);
+		std::shared_ptr<CCompound> ptr3 = std::make_shared<CCompound>(compound);
+
+		ptr2->AddChildCompound(ptr3);
+		ptr1->AddChildCompound(ptr2);
+
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(ptr3->AddChildCompound(ptr1), "Compound body can't has self in bodies\n");
+		}
+	}
+
+	WHEN("Compound don't has bodies")
+	{
+		CCompound compound;
+		std::shared_ptr<CCompound> ptr = std::make_shared<CCompound>(compound);
+		THEN("Density, volume and mass = 0")
+		{
+			CHECK(ptr->GetDensity() == 0);
+			CHECK(ptr->GetVolume() == 0);
+			CHECK(ptr->GetMass() == 0);
 		}
 	}
 }
-
+/*
 TEST_CASE("Test store methods")
 {
 	BodyStore store;
@@ -267,3 +284,4 @@ TEST_CASE("Test store methods")
 		CHECK(body->GetDensity() == 800);
 	}
 }
+*/

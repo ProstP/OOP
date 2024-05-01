@@ -23,7 +23,7 @@ private:
 	void PrintAllBodies(std::ostream& out) const;
 	void PrintBodyWithMaxMass(std::ostream& out) const;
 	void PrintLightestBodyInLiquid(std::ostream& out) const;
-	std::vector<std::shared_ptr<CBody>> CreateBodiesForCompound(std::istream& in);
+	void AddBodiesForCompound(std::shared_ptr<CCompound>& body, std::istream& in);
 	std::shared_ptr<CSphere> CreateSphereForCompound(std::istream& in);
 	std::shared_ptr<CParallelepiped> CreateParallelepipedForCompound(std::istream& in);
 	std::shared_ptr<CCylinder> CreateCylinderForCompound(std::istream& in);

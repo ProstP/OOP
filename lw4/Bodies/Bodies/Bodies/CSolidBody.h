@@ -4,10 +4,11 @@
 class CSolidBody : public CBody
 {
 public:
-	CSolidBody(double density)
-		: m_density{ density } {};
+	CSolidBody(double density);
 	double GetDensity() const override;
 	double GetMass() const override;
+	virtual std::string ToString(const std::string& indent = "") const;
+	virtual ~CSolidBody() = default;
 
 private:
 	double m_density;

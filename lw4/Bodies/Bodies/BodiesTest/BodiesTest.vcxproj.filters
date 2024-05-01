@@ -39,6 +39,9 @@
     <ClCompile Include="..\Bodies\CParallelepiped.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\Bodies\CSolidBody.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Bodies\CBody.h">
@@ -63,6 +66,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="..\Bodies\Data.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bodies\CSolidBody.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

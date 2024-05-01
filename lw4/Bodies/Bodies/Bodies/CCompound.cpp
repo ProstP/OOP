@@ -1,47 +1,82 @@
 #include "CCompound.h"
+#include <string>
 
-double CCompound::CalculateGeneralDensity(std::vector<std::shared_ptr<CBody>> bodies) const
+void CCompound::AddChildSolidBody(std::shared_ptr<CSolidBody> body)
 {
-	return CalculateGeneralMass(bodies) / CalculateGeneralVolume(bodies);
+	m_bodies.push_back(body);
 }
 
-//enable shared_ptr
-//Проблема с зацикливанием, add добавить
-//Вычитывать не сохранять
-
-double CCompound::CalculateGeneralVolume(std::vector<std::shared_ptr<CBody>> bodies) const
+void CCompound::AddChildCompound(std::shared_ptr<CCompound> body)
 {
-	double volume = 0;
-
-	for (auto body : bodies)
+	auto ptr = shared_from_this();
+	auto fn = [&ptr](const std::shared_ptr<CBody>& body)
 	{
-		volume += body->GetVolume();
+		if (body == ptr)
+		{
+			throw std::invalid_argument("Compound body can't has self in bodies\n");
+		}
+	};
+	fn(body);
+
+	body->ExecuteFnToBodies(fn);
+	m_bodies.push_back(body);
+}
+
+double CCompound::GetVolume() const
+{
+	double value = 0;
+
+	for (const auto& body : m_bodies)
+	{
+		value += body->GetVolume();
 	}
 
-	return volume;
+	return value;
 }
 
-double CCompound::CalculateGeneralMass(std::vector<std::shared_ptr<CBody>> bodies) const
+double CCompound::GetMass() const
 {
-	double mass = 0;
+	double value = 0;
 
-	for (auto body : bodies)
+	for (const auto& body : m_bodies)
 	{
-		mass += body->GetMass();
+		value += body->GetMass();
 	}
 
-	return mass;
+	return value;
 }
 
-std::string CCompound::ToString() const
+double CCompound::GetDensity() const
 {
-	std::string bodyStr = "\n<Compound\n";
+	if (GetVolume() == 0)
+	{
+		return 0;
+	}
+
+	return GetMass() / GetVolume();
+}
+
+std::string CCompound::ToString(const std::string& indent) const
+{
+	std::string bodyStr = "\n" + indent + "<Compound\n";
+	bodyStr = bodyStr + indent + "Density: " + std::to_string(GetDensity()) + "\n";
+	bodyStr = bodyStr + indent + "Volume: " + std::to_string(GetVolume()) + "\n";
+	bodyStr = bodyStr + indent + "Mass: " + std::to_string(GetMass()) + "\n";
 
 	for (auto body : m_bodies)
 	{
-		bodyStr += body->ToString();
+		bodyStr += body->ToString(indent + "    ");
 	}
-	bodyStr += "/Compound>\n\n";
+	bodyStr = bodyStr + indent + "/Compound>\n\n";
 
 	return bodyStr;
+}
+
+void CCompound::ExecuteFnToBodies(const std::function<void(const std::shared_ptr<CBody>&)>& fn) const
+{
+	for (const auto& body : m_bodies)
+	{
+		fn(body);
+		body->ExecuteFnToBodies(fn);
+	}
 }

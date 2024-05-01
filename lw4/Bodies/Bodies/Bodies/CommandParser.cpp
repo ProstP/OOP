@@ -46,7 +46,7 @@ void CommandParser::Handle(std::istream& in, std::ostream& out)
 					continue;
 				}
 				DefineCreateCommands(command, in);
-				out << std::endl << "Success created" << std::endl;
+				out << std::endl << "Success created" << std::endl << std::endl;
 			}
 			else
 			{
@@ -126,8 +126,8 @@ void CommandParser::CreateCone(std::istream& in)
 
 void CommandParser::CreateCompound(std::istream& in)
 {
-	auto bodies = CreateBodiesForCompound(in);
-	m_store.CreateCompound(bodies);
+	auto compound = m_store.CreateCompound();
+	AddBodiesForCompound(compound, in);
 }
 
 void CommandParser::PrintCommands(std::ostream& out) const
@@ -163,7 +163,7 @@ void CommandParser::PrintAllBodies(std::ostream& out) const
 	{
 		out << body->ToString();
 	};
-	m_store.ExecuteFnToAllBodies(printFn);
+	m_store.ExecuteFnToBodies(printFn);
 	out << std::endl;
 }
 
@@ -179,32 +179,30 @@ void CommandParser::PrintLightestBodyInLiquid(std::ostream& out) const
 	out << std::endl << body->ToString() << std::endl;
 }
 
-std::vector<std::shared_ptr<CBody>> CommandParser::CreateBodiesForCompound(std::istream& in)
+void CommandParser::AddBodiesForCompound(std::shared_ptr<CCompound>& body, std::istream& in)
 {
 	int command;
-	std::vector<std::shared_ptr<CBody>> bodies;
-
 	while (in >> command)
 	{
 		switch (command)
 		{
 		case CREATE_SPHERE:
-			bodies.push_back(CreateSphereForCompound(in));
+			body->AddChildSolidBody(CreateSphereForCompound(in));
 			break;
 		case CREATE_PARALLELEPIPED:
-			bodies.push_back(CreateParallelepipedForCompound(in));
+			body->AddChildSolidBody(CreateParallelepipedForCompound(in));
 			break;
 		case CREATE_CYLINDER:
-			bodies.push_back(CreateCylinderForCompound(in));
+			body->AddChildSolidBody(CreateCylinderForCompound(in));
 			break;
 		case CREATE_CONE:
-			bodies.push_back(CreateConeForCompound(in));
+			body->AddChildSolidBody(CreateConeForCompound(in));
 			break;
 		case CREATE_COMPOUND:
-			bodies.push_back(CreateCompoundForCompound(in));
+			body->AddChildCompound(CreateCompoundForCompound(in));
 			break;
 		default:
-			return bodies;
+			return;
 		}
 	}
 }
@@ -243,7 +241,8 @@ std::shared_ptr<CCone> CommandParser::CreateConeForCompound(std::istream& in)
 
 std::shared_ptr<CCompound> CommandParser::CreateCompoundForCompound(std::istream& in)
 {
-	auto bodies = CreateBodiesForCompound(in);
-	CCompound compound(bodies);
-	return std::make_shared<CCompound>(compound);
+	CCompound compound;
+	std::shared_ptr<CCompound> ptr = std::make_shared<CCompound>(compound);
+	AddBodiesForCompound(ptr, in);
+	return ptr;
 }

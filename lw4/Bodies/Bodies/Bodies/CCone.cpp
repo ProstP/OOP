@@ -2,6 +2,17 @@
 #include "Data.h"
 #include <string>
 
+CCone::CCone(double density, double baseRadius, double height)
+	: CSolidBody(density)
+	, m_baseRadius{ baseRadius }
+	, m_height{ height }
+{
+	if (m_baseRadius < 1 || m_height < 1)
+	{
+		throw std::invalid_argument("The body parameters must be positive\n");
+	}
+}
+
 double CCone::GetVolume() const
 {
 	if (m_baseRadius < 1 || m_height < 1)
@@ -21,12 +32,12 @@ double CCone::GetHeight() const
 	return m_height;
 }
 
-std::string CCone::ToString() const
+std::string CCone::ToString(const std::string& indent) const
 {
-	std::string bodyStr = "\n<Cone\n";
-	bodyStr += CBody::ToString();
-	bodyStr = bodyStr + "Base radius: " + std::to_string(m_baseRadius) + "\n";
-	bodyStr = bodyStr + "Height: " + std::to_string(m_height) + "\n";
-	bodyStr += "/Cone>\n\n";
+	std::string bodyStr = "\n" + indent + "<Cone\n";
+	bodyStr += CSolidBody::ToString(indent);
+	bodyStr = bodyStr + indent + "Base radius: " + std::to_string(m_baseRadius) + "\n";
+	bodyStr = bodyStr + indent + "Height: " + std::to_string(m_height) + "\n";
+	bodyStr = bodyStr + indent + "/Cone>\n\n";
 	return bodyStr;
 }

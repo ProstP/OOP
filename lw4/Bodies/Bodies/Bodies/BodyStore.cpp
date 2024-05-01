@@ -25,13 +25,15 @@ void BodyStore::CreateCone(double density, double baseRadius, double height)
 	m_bodies.push_back(std::make_shared<CCone>(cone));
 }
 
-void BodyStore::CreateCompound(const std::vector<std::shared_ptr<CBody>>& bodies)
+std::shared_ptr<CCompound> BodyStore::CreateCompound()
 {
-	CCompound compound(bodies);
-	m_bodies.push_back(std::make_shared<CCompound>(compound));
+	CCompound compound;
+	std::shared_ptr<CCompound> ptr = std::make_shared<CCompound>(compound);
+	m_bodies.push_back(ptr);
+	return ptr;
 }
 
-void BodyStore::ExecuteFnToAllBodies(const std::function<void(std::shared_ptr<CBody>)>& fn) const
+void BodyStore::ExecuteFnToBodies(const std::function<void(std::shared_ptr<CBody>)>& fn) const
 {
 	for (const auto& body : m_bodies)
 	{

@@ -4,16 +4,12 @@
 class CParallelepiped : public CSolidBody
 {
 public:
-	CParallelepiped(double density, double width, double height, double depth)
-		: CSolidBody(density)
-		, m_width{ width }
-		, m_height{ height }
-		, m_depth{ depth } {};
+	CParallelepiped(double density, double width, double height, double depth);
 	double GetVolume() const override;
 	double GetWidth() const;
 	double GetHeight() const;
 	double GetDepth() const;
-	std::string ToString() const override;
+	std::string ToString(const std::string& indent = "") const override;
 	~CParallelepiped() override = default;
 
 private:
