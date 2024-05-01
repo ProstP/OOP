@@ -213,11 +213,27 @@ TEST_CASE("Creating bodies")
 		double generalVolume = 2 * cone.GetVolume() + cylinder.GetVolume();
 		double generalMass = 2 * cone.GetMass() + cylinder.GetMass();
 		double generalDestinity = generalMass / generalVolume;
+		std::string bodyStr1 = "\n<Compound\n";
+		std::string densityStr1 = "Density: " + std::to_string(ptr2->GetDensity()) + "\n";
+		std::string volumeStr1 = "Volume: " + std::to_string(ptr2->GetVolume()) + "\n";
+		std::string massStr1 = "Mass: " + std::to_string(ptr2->GetMass()) + "\n";
+		std::string coneStr1 = cone.ToString("    ");
+		std::string bodyStr2 = "\n    <Compound\n";
+		std::string densityStr2 = "    Density: " + std::to_string(ptr1->GetDensity()) + "\n";
+		std::string volumeStr2 = "    Volume: " + std::to_string(ptr1->GetVolume()) + "\n";
+		std::string massStr2 = "    Mass: " + std::to_string(ptr1->GetMass()) + "\n";
+		std::string coneStr2 = cone.ToString("        ");
+		std::string cylinderStr = cylinder.ToString("        ");
+		std::string bodyStr3 = "    /Compound>\n\n";
+		std::string bodyStr4 = "/Compound>\n\n";
+		std::string bodyStr = bodyStr1 + densityStr1 + volumeStr1 + massStr1 + coneStr1 + 
+			bodyStr2 + densityStr2 + volumeStr2 + massStr2 + coneStr2 + cylinderStr + bodyStr3 + bodyStr4;
 		THEN("General volume, mass and densitity are right")
 		{
 			CHECK(generalVolume == ptr2->GetVolume());
 			CHECK(generalMass== ptr2->GetMass());
 			CHECK(generalDestinity == ptr2->GetDensity());
+			CHECK(bodyStr == ptr2->ToString());
 		}
 	}
 
