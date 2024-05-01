@@ -354,24 +354,6 @@ TEST_CASE("Test store methods")
 {
 	BodyStore store;
 
-	WHEN("Get all bodies in string with fn")
-	{
-		store.CreateCone(5, 5, 5);
-		CCone cone(5, 5, 5);
-		store.CreateSphere(5, 2);
-		CSphere sphere(5, 2);
-		auto ptr = store.CreateCompound();
-		CCone cone1(5, 2, 5);
-		ptr->AddChildSolidBody(std::make_shared<CCone>(cone1));
-		std::string str = cone.ToString() + sphere.ToString() + ptr->ToString();
-		std::string result;
-		auto fn = []
-		THEN("Str will contain info about bodies")
-		{
-			CHECK(str == store.);
-		}
-	}
-
 	WHEN("Find body with max mass")
 	{
 		store.CreateParallelepiped(5, 5, 5, 5);
