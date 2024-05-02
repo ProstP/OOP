@@ -13,6 +13,9 @@ public:
 	Month GetMonth() const;
 	unsigned GetYear() const;
 	WeekDay GetWeekDay() const;
-	bool IsValid() const;
+private:
+	unsigned m_timeStap;
+	unsigned CalculateDayCountByYear(unsigned year) const;
+	unsigned CalculateDayCountByMonth(Month month, bool isLeap = false) const;
 };
 
