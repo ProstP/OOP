@@ -14,9 +14,11 @@ const unsigned DAY_IN_WEEK = 7;
 
 CDate::CDate(unsigned day, Month month, unsigned year)
 {
-	CheckDayAndMonthToValid(day, month, year % 4 == 0);
+	// Проверку на дублтрование вынести leap
+	bool isLeap = CheckYearIsLeap(year);
+	CheckDayAndMonthToValid(day, month, isLeap);
 	m_timeStamp = CalculateDayCountByYear(year);
-	m_timeStamp += CalculateDayCountByMonth(month, year % 4 == 0);
+	m_timeStamp += CalculateDayCountByMonth(month, isLeap);
 	m_timeStamp += (day - 1);
 }
 
@@ -37,7 +39,7 @@ CDate::CDate()
 unsigned CDate::GetDay() const
 {
 	unsigned year = GetYear();
-	return m_timeStamp - CalculateDayCountByYear(year) - CalculateDayCountByMonth(GetMonth(), year % 4 == 0) + 1;
+	return m_timeStamp - CalculateDayCountByYear(year) - CalculateDayCountByMonth(GetMonth(), CheckYearIsLeap(year)) + 1;
 }
 
 Month CDate::GetMonth() const
@@ -46,13 +48,14 @@ Month CDate::GetMonth() const
 	unsigned year = GetYear();
 	days = days - CalculateDayCountByYear(year) + 1;
 	unsigned daysInMonth = GetDayCountInMonth(Month::JANUARY);
-	unsigned monthCount = (unsigned)Month::JANUARY;
-	while (days > daysInMonth && monthCount != (unsigned)Month::DECEMBER)
+	unsigned monthCount = static_cast<unsigned>(Month::JANUARY);
+	bool isLeap = CheckYearIsLeap(year);
+	while (days > daysInMonth && monthCount != static_cast<unsigned>(Month::DECEMBER))
 	{
 		monthCount++;
-		daysInMonth += GetDayCountInMonth((Month)monthCount, year % 4 == 0);
+		daysInMonth += GetDayCountInMonth(static_cast<Month>(monthCount), isLeap);
 	}
-	return (Month)monthCount;
+	return static_cast<Month>(monthCount);
 }
 
 unsigned CDate::GetYear() const
@@ -77,7 +80,7 @@ unsigned CDate::GetYear() const
 
 WeekDay CDate::GetWeekDay() const
 {
-	return (WeekDay)((m_timeStamp + (unsigned)WeekDay::THURSDAY) % 7);
+	return static_cast<WeekDay>((m_timeStamp + static_cast<unsigned>(WeekDay::THURSDAY)) % 7);
 }
 
 CDate& CDate::operator++()
@@ -162,8 +165,8 @@ CDate& CDate::operator-=(unsigned value)
 
 std::ostream& operator<<(std::ostream& out, const CDate& date)
 {
-	out << std::setfill('0') << std::setw(2) << date.GetDay() << "." 
-		<< std::setfill('0') << std::setw(2) << (unsigned)date.GetMonth() << "." 
+	out << std::setfill('0') << std::setw(2) << date.GetDay() << "."
+		<< std::setfill('0') << std::setw(2) << static_cast<unsigned>(date.GetMonth()) << "."
 		<< date.GetYear();
 	return out;
 }
@@ -177,7 +180,7 @@ std::istream& operator>>(std::istream& in, CDate& date)
 	{
 		throw std::invalid_argument("Format must be dd.mm.yyyy, day <= 31, month <= 12, year 1970 - 9999");
 	}
-	date = CDate(day, (Month)month, year);
+	date = CDate(day, static_cast<Month>(month), year);
 	return in;
 }
 
@@ -230,6 +233,7 @@ bool CDate::operator<(const CDate& date) const
 	{
 		return false;
 	}
+	//Посмотреть предупрежедния
 }
 
 bool CDate::operator>(const CDate& date) const
@@ -254,6 +258,7 @@ bool CDate::operator>=(const CDate& date) const
 
 unsigned CDate::CalculateDayCountByYear(unsigned year) const
 {
+	//Каждый сотый год не високосный
 	if (year < MIN_YEAR)
 	{
 		throw std::out_of_range("Date bellow min date value");
@@ -279,7 +284,7 @@ unsigned CDate::CalculateDayCountByYear(unsigned year) const
 
 unsigned CDate::CalculateDayCountByMonth(Month month, bool isLeap) const
 {
-	unsigned fullMonth = (unsigned)month - 1;
+	unsigned fullMonth = static_cast<unsigned>(month) - 1;
 	unsigned pair = fullMonth / 2;
 	unsigned inPair = fullMonth % 2;
 	unsigned days = pair * (30 + 31);
@@ -322,38 +327,20 @@ void CDate::CheckDayAndMonthToValid(unsigned day, Month month, bool isLeap) cons
 	}
 }
 
-/*
-Month CDate::GetMonth() const
+//Метод должен быть static
+bool CDate::CheckYearIsLeap(unsigned year) const
 {
-	//Доработать
-	unsigned days = m_timeStamp;
-	unsigned year = GetYear();
-	days = days - CalculateDayCountByYear(year);
-	if (days < 31 + (year % 4 == 0 ? 29 : 28))
+	if (year % 400 == 0)
 	{
-		return (Month)(days / 31 + 1);
+		return true;
 	}
-	days = days - (31 + (year % 4 == 0 ? 29 : 28));
-	unsigned pair;
-	unsigned daysInPair;
-	unsigned inPair;
-	if (days <= 61 * 2 + 31)
+	if (year % 100 == 0)
 	{
-		pair = days / 61;
-		daysInPair = days % 61;
-		inPair = daysInPair / 31;
-		return (Month)(2 + pair * 2 + inPair + 1);
+		return false;
 	}
-	days -= (61 * 2);
-	if (days < 62)
+	if (year % 4 == 0)
 	{
-		return Month::AUGUST;
+		return true;
 	}
-	days -= 62;
-
-	pair = days / 61;
-	daysInPair = days % 61;
-	inPair = daysInPair / 30;
-	return (Month)(8 + pair * 2 + inPair + 1);
+	return false;
 }
-*/

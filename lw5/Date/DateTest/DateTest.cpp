@@ -56,6 +56,18 @@ TEST_CASE("Creating date")
 			CHECK_THROWS_WITH(CDate(29, Month::FEBRUARY, 2005), "Invalid day of month");
 		}
 	}
+
+	WHEN("Set 29 february in year % == 4 but not leap")
+	{
+		CDate date(28, Month::FEBRUARY, 2101);
+		++date;
+		THEN("Will be trow exception")
+		{
+			CHECK(date.GetDay() == 1);
+			CHECK(date.GetMonth() == Month::MARCH);
+			CHECK(date.GetWeekDay() == WeekDay::TUESDAY);
+		}
+	}
 }
 
 TEST_CASE("Checking boundary dates")
