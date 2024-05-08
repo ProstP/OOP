@@ -38,5 +38,5 @@ private:
 	unsigned CalculateDayCountByMonth(Month month, bool isLeap = false) const;
 	unsigned GetDayCountInMonth(Month month, bool isLoop = false) const;
 	void CheckDayAndMonthToValid(unsigned day, Month month, bool isLeap = false) const;
-	bool CheckYearIsLeap(unsigned year) const;
+	static bool CheckYearIsLeap(unsigned year);
 };

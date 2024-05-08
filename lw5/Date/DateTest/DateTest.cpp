@@ -66,6 +66,19 @@ TEST_CASE("Creating date")
 			CHECK(date.GetDay() == 1);
 			CHECK(date.GetMonth() == Month::MARCH);
 			CHECK(date.GetWeekDay() == WeekDay::TUESDAY);
+			CHECK(date.GetYear() == 2101);
+		}
+	}
+
+	WHEN("Set max value of date")
+	{
+		CDate date(31, Month::DECEMBER, 9999);
+		THEN("This day will be Friday")
+		{
+			CHECK(date.GetDay() == 31);
+			CHECK(date.GetMonth() == Month::DECEMBER);
+			CHECK(date.GetYear() == 9999);
+			CHECK(date.GetWeekDay() == WeekDay::FRIDAY);
 		}
 	}
 }

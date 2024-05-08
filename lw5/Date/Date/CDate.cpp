@@ -14,7 +14,6 @@ const unsigned DAY_IN_WEEK = 7;
 
 CDate::CDate(unsigned day, Month month, unsigned year)
 {
-	// Проверку на дублтрование вынести leap
 	bool isLeap = CheckYearIsLeap(year);
 	CheckDayAndMonthToValid(day, month, isLeap);
 	m_timeStamp = CalculateDayCountByYear(year);
@@ -71,11 +70,39 @@ unsigned CDate::GetYear() const
 	}
 	unsigned year = 3;
 	unsigned days = m_timeStamp - DAY_IN_YEAR * 2 - DAY_IN_LEAP_YEAR;
+	if (days <= 7 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR))
+	{
+		unsigned leapYears = days / (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
+		unsigned daysInFour = days % (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
+		unsigned yearInFour = daysInFour / DAY_IN_YEAR;
+		yearInFour -= yearInFour == 4 ? 1 : 0;
+		return MIN_YEAR + year + leapYears * 4 + yearInFour;
+	}
+	//3 * (24 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR) + 25 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR)
+	unsigned fourHunredCount = days / (97 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 12 * DAY_IN_YEAR);
+	days %= (97 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 12 * DAY_IN_YEAR);
+
+	if (days > 3 * (24 * (3 * DAY_IN_LEAP_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR))
+	{
+		days -= (3 * (24 * (3 * DAY_IN_LEAP_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR));
+		unsigned leapYears = days / (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
+		unsigned daysInFour = days % (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
+		unsigned yearInFour = daysInFour / DAY_IN_YEAR;
+		yearInFour -= yearInFour == 4 ? 1 : 0;
+		return MIN_YEAR + year + leapYears * 4 + yearInFour + fourHunredCount * 400 + 3;
+	}
+
+	unsigned hundredCount = days / (24 * (3 * DAY_IN_LEAP_YEAR + DAY_IN_YEAR) + 4 * DAY_IN_YEAR);
+	days %= (24 * (3 * DAY_IN_LEAP_YEAR + DAY_IN_YEAR) + 4 * DAY_IN_YEAR);
+	if (days == 0)
+	{
+		return MIN_YEAR + year + fourHunredCount * 400 + hundredCount;
+	}
 	unsigned leapYears = days / (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
 	unsigned daysInFour = days % (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
 	unsigned yearInFour = daysInFour / DAY_IN_YEAR;
 	yearInFour -= yearInFour == 4 ? 1 : 0;
-	return MIN_YEAR + year + leapYears * 4 + yearInFour;
+	return MIN_YEAR + year + leapYears * 4 + yearInFour + fourHunredCount * 400 + hundredCount * 100;
 }
 
 WeekDay CDate::GetWeekDay() const
@@ -229,11 +256,7 @@ bool CDate::operator<(const CDate& date) const
 	{
 		return true;
 	}
-	if (GetDay() >= date.GetDay())
-	{
-		return false;
-	}
-	//Посмотреть предупрежедния
+	return false;
 }
 
 bool CDate::operator>(const CDate& date) const
@@ -258,7 +281,6 @@ bool CDate::operator>=(const CDate& date) const
 
 unsigned CDate::CalculateDayCountByYear(unsigned year) const
 {
-	//Каждый сотый год не високосный
 	if (year < MIN_YEAR)
 	{
 		throw std::out_of_range("Date bellow min date value");
@@ -275,10 +297,36 @@ unsigned CDate::CalculateDayCountByYear(unsigned year) const
 		return days;
 	}
 	days = 2 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR;
-	year -= 3;
-	unsigned leapYear = year / 4;
-	unsigned yearInFour = year % 4;
-	days = days + leapYear * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + yearInFour * DAY_IN_YEAR;
+	if (year <= 30)
+	{
+		year -= 3;
+		unsigned leapYear = year / 4;
+		unsigned yearInFour = year % 4;
+		days = days + leapYear * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + yearInFour * DAY_IN_YEAR;
+		return days;
+	}
+	year -= 31;
+	days += 7 * (DAY_IN_LEAP_YEAR + 3 * DAY_IN_YEAR);
+	unsigned fourHunredCount = year / 400;
+	days += (fourHunredCount * (25 * (3 *DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 3 * (24 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR)));
+	unsigned inFourHundredGroup = year % 400;
+
+	if (inFourHundredGroup > 300)
+	{
+		year = inFourHundredGroup - 300;
+		days += (3 * (24 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR));
+		unsigned leapYear = year / 4;
+		unsigned yearInFour = year % 4;
+		days += (leapYear * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + yearInFour * DAY_IN_YEAR);
+		return days;
+	}
+
+	unsigned hundredCount = year / 100;
+	unsigned inHundred = year % 100;
+	days += (hundredCount * (24 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR));
+	unsigned leapYear = inHundred / 4;
+	unsigned yearInFour = inHundred % 4;
+	days += (leapYear * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + yearInFour * DAY_IN_YEAR);
 	return days;
 }
 
@@ -316,6 +364,8 @@ unsigned CDate::GetDayCountInMonth(Month month, bool isLeap) const
 		return 30;
 	case Month::FEBRUARY:
 		return (isLeap ? 29 : 28);
+	default:
+		throw std::invalid_argument("Unknown month");
 	};
 }
 
@@ -327,8 +377,7 @@ void CDate::CheckDayAndMonthToValid(unsigned day, Month month, bool isLeap) cons
 	}
 }
 
-//Метод должен быть static
-bool CDate::CheckYearIsLeap(unsigned year) const
+bool CDate::CheckYearIsLeap(unsigned year)
 {
 	if (year % 400 == 0)
 	{
