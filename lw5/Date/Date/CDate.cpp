@@ -70,39 +70,27 @@ unsigned CDate::GetYear() const
 	}
 	unsigned year = 3;
 	unsigned days = m_timeStamp - DAY_IN_YEAR * 2 - DAY_IN_LEAP_YEAR;
-	if (days <= 7 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR))
-	{
-		unsigned leapYears = days / (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
-		unsigned daysInFour = days % (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
-		unsigned yearInFour = daysInFour / DAY_IN_YEAR;
-		yearInFour -= yearInFour == 4 ? 1 : 0;
-		return MIN_YEAR + year + leapYears * 4 + yearInFour;
-	}
-	//3 * (24 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR) + 25 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR)
-	unsigned fourHunredCount = days / (97 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 12 * DAY_IN_YEAR);
-	days %= (97 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 12 * DAY_IN_YEAR);
+	const unsigned dayCountIn4Years = 3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR;
 
-	if (days > 3 * (24 * (3 * DAY_IN_LEAP_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR))
+	if (days > 7 * dayCountIn4Years)
 	{
-		days -= (3 * (24 * (3 * DAY_IN_LEAP_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR));
-		unsigned leapYears = days / (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
-		unsigned daysInFour = days % (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
-		unsigned yearInFour = daysInFour / DAY_IN_YEAR;
-		yearInFour -= yearInFour == 4 ? 1 : 0;
-		return MIN_YEAR + year + leapYears * 4 + yearInFour + fourHunredCount * 400 + 3;
+		year += 28;
+		days -= (7 * dayCountIn4Years);
+		const unsigned dayCountInEveryHunredYears = 24 * dayCountIn4Years + 4 * DAY_IN_YEAR;
+		const unsigned dayCountInEvery4HunredTears = 25 * dayCountIn4Years;
+		const unsigned dayCountIn4HunredYears = 3 * dayCountInEveryHunredYears + dayCountInEvery4HunredTears;
+		year += (days / dayCountIn4HunredYears * 400);
+		days %= (dayCountIn4HunredYears);
+		year += (days / dayCountInEveryHunredYears * 100);
+		days %= dayCountInEveryHunredYears;
 	}
 
-	unsigned hundredCount = days / (24 * (3 * DAY_IN_LEAP_YEAR + DAY_IN_YEAR) + 4 * DAY_IN_YEAR);
-	days %= (24 * (3 * DAY_IN_LEAP_YEAR + DAY_IN_YEAR) + 4 * DAY_IN_YEAR);
-	if (days == 0)
-	{
-		return MIN_YEAR + year + fourHunredCount * 400 + hundredCount;
-	}
-	unsigned leapYears = days / (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
-	unsigned daysInFour = days % (DAY_IN_YEAR * 3 + DAY_IN_LEAP_YEAR);
-	unsigned yearInFour = daysInFour / DAY_IN_YEAR;
+	year += (days / dayCountIn4Years * 4);
+	days %= dayCountIn4Years;
+	unsigned yearInFour = days / DAY_IN_YEAR;
 	yearInFour -= yearInFour == 4 ? 1 : 0;
-	return MIN_YEAR + year + leapYears * 4 + yearInFour + fourHunredCount * 400 + hundredCount * 100;
+	year += yearInFour;
+	return MIN_YEAR + year;
 }
 
 WeekDay CDate::GetWeekDay() const
@@ -297,35 +285,23 @@ unsigned CDate::CalculateDayCountByYear(unsigned year) const
 		return days;
 	}
 	days = 2 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR;
-	if (year <= 30)
+	year -= 3;
+	const unsigned dayCountIn4Years = 3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR;
+	if (year > 27)
 	{
-		year -= 3;
-		unsigned leapYear = year / 4;
-		unsigned yearInFour = year % 4;
-		days = days + leapYear * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + yearInFour * DAY_IN_YEAR;
-		return days;
-	}
-	year -= 31;
-	days += 7 * (DAY_IN_LEAP_YEAR + 3 * DAY_IN_YEAR);
-	unsigned fourHunredCount = year / 400;
-	days += (fourHunredCount * (25 * (3 *DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 3 * (24 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR)));
-	unsigned inFourHundredGroup = year % 400;
-
-	if (inFourHundredGroup > 300)
-	{
-		year = inFourHundredGroup - 300;
-		days += (3 * (24 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR));
-		unsigned leapYear = year / 4;
-		unsigned yearInFour = year % 4;
-		days += (leapYear * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + yearInFour * DAY_IN_YEAR);
-		return days;
+		year -= 28;
+		days += (7 * dayCountIn4Years);
+		const unsigned dayCountInEveryHunredYears = 24 * dayCountIn4Years + 4 * DAY_IN_YEAR;
+		const unsigned dayCountInEvery4HunredTears = 25 * dayCountIn4Years;
+		const unsigned dayCountIn4HunredYears = 3 * dayCountInEveryHunredYears + dayCountInEvery4HunredTears;
+		days += (year / 400 * dayCountIn4HunredYears);
+		year %= 400;
+		days += (year / 100 * dayCountInEveryHunredYears);
+		year %= 100;
 	}
 
-	unsigned hundredCount = year / 100;
-	unsigned inHundred = year % 100;
-	days += (hundredCount * (24 * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + 4 * DAY_IN_YEAR));
-	unsigned leapYear = inHundred / 4;
-	unsigned yearInFour = inHundred % 4;
+	unsigned leapYear = year / 4;
+	unsigned yearInFour = year % 4;
 	days += (leapYear * (3 * DAY_IN_YEAR + DAY_IN_LEAP_YEAR) + yearInFour * DAY_IN_YEAR);
 	return days;
 }
