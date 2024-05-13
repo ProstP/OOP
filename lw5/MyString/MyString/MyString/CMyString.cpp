@@ -6,10 +6,11 @@ CMyString::CMyString(const char* pString, size_t length)
 	{
 		length = 0;
 	}
-	m_symbols = new char[length + 1];
 	m_length = length;
+	m_capacity = length * 2;
+	m_symbols = new char[m_capacity + 1];
 	memcpy(m_symbols, pString, length);
-	m_symbols[length] = END_OF_STRING;
+	m_symbols[m_length] = END_OF_STRING;
 }
 
 CMyString::CMyString()
@@ -30,11 +31,13 @@ CMyString::CMyString(const CMyString& other)
 CMyString::CMyString(CMyString&& other) noexcept
 {
 	m_length = 0;
+	m_capacity = 0;
 	delete[] m_symbols;
 	m_symbols = new char[1];
 	m_symbols[0] = END_OF_STRING;
 	std::swap(m_length, other.m_length);
 	std::swap(m_symbols, other.m_symbols);
+	std::swap(m_capacity, other.m_capacity);
 }
 
 CMyString::CMyString(const std::string& stlString)
@@ -52,6 +55,11 @@ size_t CMyString::GetLength() const
 	return m_length;
 }
 
+size_t CMyString::GetCapacity() const
+{
+	return m_capacity;
+}
+
 const char* CMyString::GetStringData() const
 {
 	return m_symbols;
@@ -59,9 +67,9 @@ const char* CMyString::GetStringData() const
 
 CMyString CMyString::SubString(size_t start, size_t length) const
 {
-	if (start > m_length)
+	if (start < 0 || start > m_length)
 	{
-		throw std::out_of_range("Start of sub string bigger length of string");
+		throw std::out_of_range("Start out of range");
 	}
 	if (length > m_length - start)
 	{
@@ -96,14 +104,31 @@ CMyString CMyString::operator+(const CMyString& other) const
 CMyString& CMyString::operator+=(const CMyString& other)
 {
 	size_t newStrLen = this->GetLength() + other.GetLength();
+	if (m_capacity >= newStrLen)
+	{
+		memcpy(m_symbols + this->GetLength(), other.GetStringData(), other.GetLength());
+	}
+	else
+	{
+		while (m_capacity < newStrLen)
+		{
+			if (m_capacity == 0)
+			{
+				m_capacity = 2;
+			}
+			else
+			{
+				m_capacity *= 2;
+			}
+		}
+		char* newStrSymbols = new char[m_capacity + 1];
+		memcpy(newStrSymbols, this->GetStringData(), this->GetLength());
+		memcpy(newStrSymbols + this->GetLength(), other.GetStringData(), other.GetLength());
+		delete[] m_symbols;
+		m_symbols = newStrSymbols;
+	}
 
-	char* newStrSymbols = new char[newStrLen + 1];
-	memcpy(newStrSymbols, this->GetStringData(), this->GetLength());
-	memcpy(newStrSymbols + this->GetLength(), other.GetStringData(), other.GetLength());
-
-	newStrSymbols[newStrLen] = END_OF_STRING;
-	delete[] m_symbols;
-	m_symbols = newStrSymbols;
+	m_symbols[newStrLen] = END_OF_STRING;
 	m_length = newStrLen;
 
 	return *this;
@@ -194,11 +219,13 @@ CMyString& CMyString::operator=(CMyString&& other) noexcept
 	{
 		delete[] m_symbols;
 		m_length = 0;
+		m_capacity = 0;
 		m_symbols = new char[1];
 		m_symbols[0] = END_OF_STRING;
 
 		std::swap(m_symbols, other.m_symbols);
 		std::swap(m_length, other.m_length);
+		std::swap(m_capacity, other.m_capacity);
 	}
 
 	return *this;

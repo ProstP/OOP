@@ -6,6 +6,15 @@
 
 TEST_CASE("Creating date")
 {
+	WHEN("Today")
+	{
+		CDate date(11, Month::MAY, 2024);
+		THEN("Today")
+		{
+			CHECK(date.GetWeekDay() == WeekDay::SATURDAY);
+		}
+	}
+
 	WHEN("Creating date without parametrs")
 	{
 		CDate date;

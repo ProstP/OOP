@@ -14,6 +14,7 @@ public:
 	CMyString(const std::string& stlString);
 	~CMyString();
 	size_t GetLength() const;
+	size_t GetCapacity() const;
 	const char* GetStringData() const;
 	CMyString SubString(size_t start, size_t length = SIZE_MAX) const;
 	void Clear();
@@ -40,4 +41,5 @@ public:
 private:
 	char* m_symbols;
 	size_t m_length;
+	size_t m_capacity;
 };

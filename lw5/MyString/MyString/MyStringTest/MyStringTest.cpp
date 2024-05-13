@@ -115,7 +115,17 @@ TEST_CASE("Getting substr")
 		CMyString myStr = CMyString(str);
 		THEN("Will throw exception")
 		{
-			CHECK_THROWS_WITH(myStr.SubString(15, 5), "Start of sub string bigger length of string");
+			CHECK_THROWS_WITH(myStr.SubString(15, 5), "Start out of range");
+		}
+	}
+
+	WHEN("Start is negative")
+	{
+		const char* str = "Some text";
+		CMyString myStr = CMyString(str);
+		THEN("Will throw exception")
+		{
+			CHECK_THROWS_WITH(myStr.SubString(-5, 5), "Start out of range");
 		}
 	}
 
@@ -124,6 +134,17 @@ TEST_CASE("Getting substr")
 		const char* str = "Some text";
 		CMyString myStr = CMyString(str);
 		CMyString substr = myStr.SubString(5, 10);
+		THEN("Sub string will contain symbols after start")
+		{
+			CHECK(strcmp(substr.GetStringData(), "text") == 0);
+		}
+	}
+
+	WHEN("Count to get is negative")
+	{
+		const char* str = "Some text";
+		CMyString myStr = CMyString(str);
+		CMyString substr = myStr.SubString(5, -5);
 		THEN("Sub string will contain symbols after start")
 		{
 			CHECK(strcmp(substr.GetStringData(), "text") == 0);
@@ -274,6 +295,18 @@ TEST_CASE("OOperator +=")
 		THEN("MyStr contain symbols from myStr2")
 		{
 			CHECK(strcmp(myStr1.GetStringData(), "text") == 0);
+		}
+	}
+
+	WHEN("Capicity < lenNewStr")
+	{
+		CMyString myStr1("So");
+		CMyString myStr2("me text");
+		myStr1 += myStr2;
+		THEN("Capicity will bigger")
+		{
+			CHECK(myStr1.GetCapacity() == 16);
+			CHECK(strcmp(myStr1.GetStringData(), "Some text") == 0);
 		}
 	}
 }

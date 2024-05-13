@@ -3,5 +3,8 @@
 
 int main()
 {
-	std::cout << "Hello World!\n";
+	const char* stri = "Some";
+	CMyString str(stri);
+	CMyString str1("Hello1 Hello World!!!!!!!");
+	str += str1;
 }
