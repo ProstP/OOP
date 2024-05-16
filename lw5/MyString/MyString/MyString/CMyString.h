@@ -3,6 +3,7 @@
 
 const char END_OF_STRING = '\0';
 
+//Наследоваться от iterator
 class CMyString
 {
 public:
