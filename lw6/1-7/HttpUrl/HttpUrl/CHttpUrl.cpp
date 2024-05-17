@@ -1,28 +1,46 @@
 #include "CHttpUrl.h"
 #include <map>
-#include <string>
 #include <regex>
+#include <string>
 
-const std::map<Protocol, unsigned short> PORT_FROM_PROTOCOL
-{
-	{Protocol::HTTP, 80},
-	{Protocol::HTTPS, 443}
+const std::map<Protocol, unsigned short> PORT_FROM_PROTOCOL{
+	{ Protocol::HTTP, 80 },
+	{ Protocol::HTTPS, 443 }
 };
-const std::map<Protocol, std::string> PROTOCOL_TO_STRING
-{
-	{Protocol::HTTP, "http"},
-	{Protocol::HTTPS, "https"}
+const std::map<Protocol, std::string> PROTOCOL_TO_STRING{
+	{ Protocol::HTTP, "http" },
+	{ Protocol::HTTPS, "https" }
+};
+const std::map<std::string, Protocol> STRING_TO_PROTOCOL{
+	{ "http", Protocol::HTTP },
+	{ "https", Protocol::HTTPS }
 };
 const unsigned short MAX_PORT_VALUE = 65535;
 const unsigned short MIN_PORT_VALUE = 1;
 
-const std::string DOMAIN_REGEX_STR = "[\\w-.,]";
-const std::string DOCUMENT_REGEX_STR = "\\.*";
-const std::regex DOMAIN_REGEX = std::regex(DOMAIN_REGEX_STR);
-const std::regex DOCUMENT_REGEX = std::regex(DOCUMENT_REGEX_STR);
+const std::string PROTOCOL_REGEX_STR = "(https?)://";
+const std::string DOMAIN_REGEX_STR = "([\\w-.,]+)";
+const std::string PORT_REGEX_STR = "(?:\\:(\\d{1,5}))?";
+const std::string DOCUMENT_REGEX_STR = "(\\S*)";
+
+const std::regex URL_REGEX = std::regex("^" + PROTOCOL_REGEX_STR + DOMAIN_REGEX_STR + PORT_REGEX_STR + "(?:/" + DOCUMENT_REGEX_STR + ")?"
+	+ "$", std::regex_constants::icase);
+const std::regex DOMAIN_REGEX = std::regex("^" + DOMAIN_REGEX_STR + "$");
+const std::regex DOCUMENT_REGEX = std::regex("^" + DOCUMENT_REGEX_STR + "$");
 
 CHttpUrl::CHttpUrl(std::string const& url)
 {
+	std::smatch match;
+	if (!std::regex_match(url, match, URL_REGEX))
+	{
+		throw CUrlParsingError::InvalidUrl();
+	}
+
+	m_protocol = GetProtocolByString(match[1]);
+	m_domain = match[2];
+	m_port = ParsePort(match[3]);
+	m_document = "/";
+	m_document += match[4];
 }
 
 CHttpUrl::CHttpUrl(std::string const& domain, std::string const& document, Protocol protocol)
@@ -35,12 +53,12 @@ CHttpUrl::CHttpUrl(std::string const& domain, std::string const& document, Proto
 {
 	if (!IsDomainValid(domain))
 	{
-		throw std::invalid_argument("Invalid domain. Domain must contain only english letters, digits, '-', ',', '.'");
+		throw std::invalid_argument("Invalid domain. Domain can has letters and symbols: '-', '.', ','");
 	}
 	m_domain = domain;
 	if (!IsDocumentValid(document))
 	{
-		throw std::invalid_argument("Invalid document. Document can not has space");
+		throw std::invalid_argument("Invalid document. Document can not has spaces");
 	}
 	if (document[0] != '/')
 	{
@@ -86,26 +104,63 @@ unsigned short CHttpUrl::GetPort() const
 bool CHttpUrl::IsDomainValid(const std::string& domain)
 {
 	std::smatch match;
-	return !(std::regex_match(domain, match, DOMAIN_REGEX));
+	return (std::regex_match(domain, match, DOMAIN_REGEX));
 }
 
 bool CHttpUrl::IsDocumentValid(const std::string& document)
 {
 	std::smatch match;
-	return !(std::regex_match(document, match, DOCUMENT_REGEX)) || (document.empty());
+	return (std::regex_match(document, match, DOCUMENT_REGEX)) || (document.empty());
 }
 
 Protocol CHttpUrl::GetProtocolByString(const std::string& str)
 {
-	if (str == "https")
+	std::string protocolStr = StrToLowerCase(str);
+	if (STRING_TO_PROTOCOL.find(protocolStr) != STRING_TO_PROTOCOL.end())
 	{
-		return Protocol::HTTPS;
-	}
-
-	if (str == "http")
-	{
-		return Protocol::HTTP;
+		return STRING_TO_PROTOCOL.at(protocolStr);
 	}
 
 	throw CUrlParsingError::InvalidProtocol();
+}
+
+unsigned short CHttpUrl::ParsePort(const std::string& portStr)
+{
+	if (portStr.empty())
+	{
+		return PORT_FROM_PROTOCOL.at(m_protocol);
+	}
+	int portValue;
+	try
+	{
+		portValue = std::stoi(portStr);
+	}
+	catch (...)
+	{
+		throw CUrlParsingError::InvalidPort();
+	}
+	if (portValue > MAX_PORT_VALUE || portValue < MIN_PORT_VALUE)
+	{
+		throw CUrlParsingError::InvalidPort();
+	}
+
+	return portValue;
+}
+
+std::string CHttpUrl::StrToLowerCase(const std::string& str)
+{
+	std::string result;
+
+	for (int i = 0; i < str.length(); i++)
+	{
+		result += tolower(str[i]);
+	}
+
+	return result;
+}
+
+std::ostream& operator<<(std::ostream& out, Protocol protocol)
+{
+	out << PROTOCOL_TO_STRING.at(protocol);
+	return out;
 }

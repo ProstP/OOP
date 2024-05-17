@@ -87,3 +87,147 @@ TEST_CASE("Creating CHttpUrl by Protocol, domain and document")
 		}
 	}
 }
+
+TEST_CASE("Create CHttpUrl by url")
+{
+	WHEN("Url full with http protocol")
+	{
+		CHttpUrl url("http://domain:8000/some-document");
+		THEN("Fields be right")
+		{
+			CHECK(url.GetURL() == "http://domain:8000/some-document");
+			CHECK(url.GetProtocol() == Protocol::HTTP);
+			CHECK(url.GetDomain() == "domain");
+			CHECK(url.GetPort() == 8000);
+			CHECK(url.GetDocument() == "/some-document");
+		}
+	}
+
+	WHEN("Url full with https protocol")
+	{
+		CHttpUrl url("https://domain:8000/some-document");
+		THEN("Fields be right")
+		{
+			CHECK(url.GetURL() == "https://domain:8000/some-document");
+			CHECK(url.GetProtocol() == Protocol::HTTPS);
+			CHECK(url.GetDomain() == "domain");
+			CHECK(url.GetPort() == 8000);
+			CHECK(url.GetDocument() == "/some-document");
+		}
+	}
+
+	WHEN("Url full with https protocol in upper case")
+	{
+		CHttpUrl url("HTTPS://domain:8000/some-document");
+		THEN("Fields be right")
+		{
+			CHECK(url.GetURL() == "https://domain:8000/some-document");
+			CHECK(url.GetProtocol() == Protocol::HTTPS);
+		}
+	}
+
+	WHEN("Url full with http protocol in upper case")
+	{
+		CHttpUrl url("HTTP://domain:8000/some-document");
+		THEN("Fields be right")
+		{
+			CHECK(url.GetURL() == "http://domain:8000/some-document");
+			CHECK(url.GetProtocol() == Protocol::HTTP);
+		}
+	}
+
+	WHEN("Url full without port")
+	{
+		CHttpUrl url("https://domain/some-document");
+		THEN("Fields be right, port will get by protocol")
+		{
+			CHECK(url.GetURL() == "https://domain/some-document");
+			CHECK(url.GetProtocol() == Protocol::HTTPS);
+			CHECK(url.GetDomain() == "domain");
+			CHECK(url.GetPort() == 443);
+			CHECK(url.GetDocument() == "/some-document");
+		}
+	}
+
+	WHEN("Url full without document")
+	{
+		CHttpUrl url("https://domain:8000");
+		THEN("Fields be right, document = /")
+		{
+			CHECK(url.GetURL() == "https://domain:8000/");
+			CHECK(url.GetProtocol() == Protocol::HTTPS);
+			CHECK(url.GetDomain() == "domain");
+			CHECK(url.GetPort() == 8000);
+			CHECK(url.GetDocument() == "/");
+		}
+	}
+
+	WHEN("Url full without document and port")
+	{
+		CHttpUrl url("https://domain");
+		THEN("Fields be right, port will get by protocol, document = /")
+		{
+			CHECK(url.GetURL() == "https://domain/");
+			CHECK(url.GetProtocol() == Protocol::HTTPS);
+			CHECK(url.GetDomain() == "domain");
+			CHECK(url.GetPort() == 443);
+			CHECK(url.GetDocument() == "/");
+		}
+	}
+
+	WHEN("String not url")
+	{
+		THEN("Will be trow exception CUtlParsingError type")
+		{
+			CHECK_THROWS_AS(CHttpUrl("It is not url"), CUrlParsingError);
+		}
+	}
+
+	WHEN("Url has invalid symbols between protocol and domain")
+	{
+		THEN("Will be trow exception CUtlParsingError type")
+		{
+			CHECK_THROWS_AS(CHttpUrl("http:/dfsdf/domain:8000/some-document"), CUrlParsingError);
+		}
+	}
+
+	WHEN("Protocol is invalid")
+	{
+		THEN("Will be trow exception CUtlParsingError type")
+		{
+			CHECK_THROWS_AS(CHttpUrl("protocol://domain:8000/some-document"), CUrlParsingError);
+		}
+	}
+
+	WHEN("Domain is invalid")
+	{
+		THEN("Will be trow exception CUtlParsingError type")
+		{
+			CHECK_THROWS_AS(CHttpUrl("http://dom:ain:8000/some-document"), CUrlParsingError);
+		}
+	}
+
+	WHEN("Port length > length of max port value")
+	{
+		THEN("Will be trow exception CUtlParsingError type")
+		{
+			CHECK_THROWS_AS(CHttpUrl("http://domain:800000/some-document"), CUrlParsingError);
+		}
+	}
+
+	WHEN("Port length = length of max port value, port value > max port value")
+	{
+		THEN("Will be trow exception CUtlParsingError type")
+		{
+			CHECK_THROWS_AS(CHttpUrl("http://domain:80000/some-document"), CUrlParsingError);
+		}
+	}
+
+	WHEN("Document has space")
+	{
+		THEN("Will be trow exception CUtlParsingError type")
+		{
+			CHECK_THROWS_AS(CHttpUrl("http://domain:8000/some document"), CUrlParsingError);
+		}
+	}
+}

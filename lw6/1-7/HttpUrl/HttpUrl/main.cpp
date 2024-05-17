@@ -1,6 +1,8 @@
 ﻿#include <iostream>
+#include "HttpUrlHandler.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	HttpUrlHandler handler;
+	handler.Handle(std::cin, std::cout);
 }

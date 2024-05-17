@@ -7,6 +7,8 @@ enum class Protocol
 	HTTPS
 };
 
+std::ostream& operator<<(std::ostream& out, Protocol protocol);
+
 class CHttpUrl
 {
 public:
@@ -64,5 +66,7 @@ private:
     bool IsDomainValid(const std::string& domain);
     bool IsDocumentValid(const std::string& document);
     Protocol GetProtocolByString(const std::string& str);
+    unsigned short ParsePort(const std::string& portStr);
+    static std::string StrToLowerCase(const std::string& str);
 };
 
