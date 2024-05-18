@@ -60,7 +60,7 @@ TEST_CASE("Creating CHttpUrl by Protocol, domain, port and document")
 	{
 		THEN("Will trow invalid_argument exception")
 		{
-			CHECK_THROWS_AS(CHttpUrl("dom", "/do c", Protocol::HTTP, 0), std::invalid_argument);
+			CHECK_THROWS_AS(CHttpUrl("dom", "/do c", Protocol::HTTP, 15), std::invalid_argument);
 		}
 	}
 }

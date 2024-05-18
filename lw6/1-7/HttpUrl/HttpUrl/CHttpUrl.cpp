@@ -3,6 +3,9 @@
 #include <regex>
 #include <string>
 
+namespace
+{
+
 const std::map<Protocol, unsigned short> PORT_FROM_PROTOCOL{
 	{ Protocol::HTTP, 80 },
 	{ Protocol::HTTPS, 443 }
@@ -24,16 +27,24 @@ const std::string PORT_REGEX_STR = "(?:\\:(\\d{1,5}))?";
 const std::string DOCUMENT_REGEX_STR = "(\\S*)";
 
 const std::regex URL_REGEX = std::regex("^" + PROTOCOL_REGEX_STR + DOMAIN_REGEX_STR + PORT_REGEX_STR + "(?:/" + DOCUMENT_REGEX_STR + ")?"
-	+ "$", std::regex_constants::icase);
+		+ "$",
+	std::regex_constants::icase);
 const std::regex DOMAIN_REGEX = std::regex("^" + DOMAIN_REGEX_STR + "$");
 const std::regex DOCUMENT_REGEX = std::regex("^" + DOCUMENT_REGEX_STR + "$");
+
+const std::string INVALID_URL = "Invalid Url.";
+const std::string INVALID_DOMAIN = "Invalid domain. Domain can has letters and symbols: '-', '.', ','";
+const std::string INVALID_PROTOCOL = "Invalid Protocol. Protocal must be http or https";
+const std::string INVALID_PORT = "Invalid Port. Port must be between 1 and 65535";
+const std::string INVALID_DOCUMENT = "Invalid document. Document can not has spaces";
+} // namespace
 
 CHttpUrl::CHttpUrl(std::string const& url)
 {
 	std::smatch match;
 	if (!std::regex_match(url, match, URL_REGEX))
 	{
-		throw CUrlParsingError::InvalidUrl();
+		throw CUrlParsingError(INVALID_URL);
 	}
 
 	m_protocol = GetProtocolByString(match[1]);
@@ -53,12 +64,12 @@ CHttpUrl::CHttpUrl(std::string const& domain, std::string const& document, Proto
 {
 	if (!IsDomainValid(domain))
 	{
-		throw std::invalid_argument("Invalid domain. Domain can has letters and symbols: '-', '.', ','");
+		throw std::invalid_argument(INVALID_DOMAIN);
 	}
 	m_domain = domain;
 	if (!IsDocumentValid(document))
 	{
-		throw std::invalid_argument("Invalid document. Document can not has spaces");
+		throw std::invalid_argument(INVALID_DOCUMENT);
 	}
 	if (document[0] != '/')
 	{
@@ -70,7 +81,7 @@ CHttpUrl::CHttpUrl(std::string const& domain, std::string const& document, Proto
 	}
 	if (port < MIN_PORT_VALUE || port > MAX_PORT_VALUE)
 	{
-		throw std::invalid_argument("Port has invalid value, port must be >= 1 and <= 65535");
+		throw std::invalid_argument(INVALID_PORT);
 	}
 	m_port = port;
 }
@@ -121,7 +132,7 @@ Protocol CHttpUrl::GetProtocolByString(const std::string& str)
 		return STRING_TO_PROTOCOL.at(protocolStr);
 	}
 
-	throw CUrlParsingError::InvalidProtocol();
+	throw CUrlParsingError(INVALID_PROTOCOL);
 }
 
 unsigned short CHttpUrl::ParsePort(const std::string& portStr)
@@ -137,11 +148,11 @@ unsigned short CHttpUrl::ParsePort(const std::string& portStr)
 	}
 	catch (...)
 	{
-		throw CUrlParsingError::InvalidPort();
+		throw CUrlParsingError(INVALID_PORT);
 	}
 	if (portValue > MAX_PORT_VALUE || portValue < MIN_PORT_VALUE)
 	{
-		throw CUrlParsingError::InvalidPort();
+		throw CUrlParsingError(INVALID_PORT);
 	}
 
 	return portValue;
