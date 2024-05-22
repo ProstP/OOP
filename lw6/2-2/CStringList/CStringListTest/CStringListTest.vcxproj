@@ -139,7 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\CStringList\CStringList.cpp" />
     <ClCompile Include="CStringListTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\CStringList\CStringList.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

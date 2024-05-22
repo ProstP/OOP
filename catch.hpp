@@ -1,3 +1,4 @@
+#include "lw6\2-2\CStringList\CStringList\CStringList.h"
 /*
  *  Catch v2.11.3
  *  Generated: 2020-03-19 13:44:21.042491
