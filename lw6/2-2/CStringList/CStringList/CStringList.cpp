@@ -1,7 +1,18 @@
 ﻿#include <iostream>
 #include "CStringList.h"
 
-int main()
+CStringList::CStringList()
 {
-	std::cout << "Hello World!\n";
+	m_count = 0;
+	m_firstPtr = nullptr;
+	m_lastPtr == nullptr;
+}
+
+CStringList::CStringList(const CStringList& other)
+{
+	m_count = other.m_count;
+}
+
+CStringList::CStringList(const CStringList&& other) noexcept
+{
 }

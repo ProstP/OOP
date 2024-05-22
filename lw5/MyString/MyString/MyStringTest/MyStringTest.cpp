@@ -622,3 +622,65 @@ TEST_CASE("Operator <<")
 		}
 	}
 }
+
+TEST_CASE("Getting iterators")
+{
+	WHEN("Begin")
+	{
+		CMyString str("Some text");
+		auto iter = str.Begin();
+		THEN("Will get iterator to first symbol")
+		{
+			CHECK(*iter == 'S');
+		}
+	}
+
+	WHEN("End")
+	{
+		CMyString str("Some text !");
+		auto iter = str.End();
+		THEN("Will get iterator to first symbol")
+		{
+			CHECK(*iter == '!');
+		}
+	}
+}
+
+TEST_CASE("Increament iterator")
+{
+	WHEN("pre ++")
+	{
+		CMyString str("Some text");
+		auto iter = str.Begin();
+		++iter;
+		THEN("New iter will point to second elt")
+		{
+			CHECK(*iter == 'o');
+		}
+	}
+
+	WHEN("post ++")
+	{
+		CMyString str("Some text");
+		auto iter1 = str.Begin();
+		auto iter2 = iter1++;
+		THEN("New iter will point to second elt")
+		{
+			CHECK(*iter2 == 'o');
+		}
+	}
+}
+
+TEST_CASE("Change symbol by iterator")
+{
+	WHEN("Success with not const string")
+	{
+		CMyString str("Some text");
+		auto iter = str.Begin();
+		*iter = 'F';
+		THEN("Symbol will change")
+		{
+			CHECK(strcmp(str.GetStringData(), "Fome text") == 0);
+		}
+	}
+}

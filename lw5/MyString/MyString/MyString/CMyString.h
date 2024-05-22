@@ -3,7 +3,6 @@
 
 const char END_OF_STRING = '\0';
 
-//Наследоваться от iterator
 class CMyString
 {
 public:
@@ -38,6 +37,38 @@ public:
 	char& operator[](size_t index);
 	friend std::istream& operator>>(std::istream& in, CMyString& myString);
 	friend std::ostream& operator<<(std::ostream& out, CMyString& myString);
+
+	class iterator
+	{
+	public:
+		iterator(char* point, int pos)
+			: m_ptr{ point }
+			, m_pos{ pos } {};
+		char& operator*() { return *m_ptr; };
+		char* operator->() { return m_ptr; };
+		iterator& operator++()
+		{
+			++m_ptr;
+			return *this;
+		};
+		iterator operator++(int)
+		{
+			iterator temp(*this);
+			++temp;
+			return temp;
+		};
+		bool operator==(const iterator& other) { return m_ptr == other.m_ptr; }
+		bool operator!=(const iterator& other) { return m_ptr != other.m_ptr; }
+
+	private:
+		char* m_ptr;
+		int m_pos;
+	};
+
+	iterator Begin();
+	iterator End();
+	iterator CBegin() const;
+	iterator CEnd() const;
 
 private:
 	char* m_symbols;

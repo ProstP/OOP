@@ -201,6 +201,42 @@ char& CMyString::operator[](size_t index)
 	return m_symbols[index];
 }
 
+CMyString::iterator CMyString::Begin()
+{
+	if (m_length == 0)
+	{
+		throw std::out_of_range("My string is empty");
+	}
+	return iterator(&m_symbols[0], 0);
+}
+
+CMyString::iterator CMyString::End()
+{
+	if (m_length == 0)
+	{
+		throw std::out_of_range("My string is empty");
+	}
+	return iterator(&m_symbols[m_length - 1], m_length);
+}
+
+CMyString::iterator CMyString::CBegin() const
+{
+	if (m_length == 0)
+	{
+		throw std::out_of_range("My string is empty");
+	}
+	return iterator(&m_symbols[0], 0);
+}
+
+CMyString::iterator CMyString::CEnd() const
+{
+	if (m_length == 0)
+	{
+		throw std::out_of_range("My string is empty");
+	}
+	return iterator(&m_symbols[m_length - 1], m_length);
+}
+
 CMyString& CMyString::operator=(const CMyString& other)
 {
 	if (std::addressof(other) != this)
