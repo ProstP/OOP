@@ -26,5 +26,8 @@
     <ClInclude Include="..\CStringList\CStringList.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="..\CStringList\CStringListOutOfRangeError.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

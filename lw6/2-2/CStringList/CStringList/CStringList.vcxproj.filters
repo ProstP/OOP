@@ -18,9 +18,15 @@
     <ClCompile Include="CStringList.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CStringList.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="CStringListOutOfRangeError.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
