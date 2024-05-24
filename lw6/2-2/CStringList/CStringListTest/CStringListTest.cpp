@@ -210,3 +210,21 @@ TEST_CASE("For each elements")
 		}
 	}
 }
+
+TEST_CASE("Change element by iterator")
+{
+	WHEN("Set new str by iterator")
+	{
+		CStringList list;
+		list.AddStrToEnd("Some");
+		list.AddStrToEnd("text");
+		auto iter = list.begin();
+		++iter;
+		THEN("Str will be changed")
+		{
+			CHECK(list[1] == "text");
+			iter->str = "new text";
+			CHECK(list[1] == "new text");
+		}
+	}
+}
