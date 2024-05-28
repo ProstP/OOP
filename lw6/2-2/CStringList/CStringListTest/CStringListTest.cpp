@@ -228,12 +228,11 @@ TEST_CASE("Change element by iterator")
 		THEN("Str will be changed")
 		{
 			CHECK(list[1] == "text");
-			iter->str = "new text";
+			*iter = "new text";
 			CHECK(list[1] == "new text");
 		}
 	}
 }
-//Тесты STL алгоритмы copy, sort и transform для поиска, min и max
 
 TEST_CASE("STL algs")
 {
@@ -242,11 +241,40 @@ TEST_CASE("STL algs")
 		CStringList list;
 		list.AddStrToEnd("Some");
 		list.AddStrToEnd("text");
-		std::string result;
-		std::copy(list.begin(), list.end(), [&result](const std::string& str) {result += str; });
+		std::vector<std::string> result;
+		std::copy(list.begin(), list.end(), std::back_inserter(result));
 		THEN("Sum of strs")
 		{
-			CHECK(result == "Sometext");
+			CHECK(result[0] == "Some");
+			CHECK(result[1] == "text");
+		}
+	}
+
+	WHEN("Min elt")
+	{
+		CStringList list;
+		list.AddStrToEnd("5");
+		list.AddStrToEnd("1");
+		list.AddStrToEnd("9");
+		list.AddStrToEnd("2");
+		auto minIter = std::min_element(list.begin(), list.end());
+		THEN("Elt with min str")
+		{
+			CHECK(*minIter == "1");
+		}
+	}
+
+	WHEN("Max elt")
+	{
+		CStringList list;
+		list.AddStrToEnd("5");
+		list.AddStrToEnd("1");
+		list.AddStrToEnd("9");
+		list.AddStrToEnd("2");
+		auto minIter = std::max_element(list.begin(), list.end());
+		THEN("Elt with max str")
+		{
+			CHECK(*minIter == "9");
 		}
 	}
 }

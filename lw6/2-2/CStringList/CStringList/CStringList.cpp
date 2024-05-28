@@ -202,12 +202,12 @@ CStringList::iterator::~iterator()
 	m_ptr = nullptr;
 }
 
-std::string CStringList::iterator::operator*()
+CStringList::iterator::references CStringList::iterator::operator*()
 {
 	return m_ptr->str;
 }
 
-Node* CStringList::iterator::operator->()
+CStringList::iterator::pointer CStringList::iterator::operator->()
 {
 	return m_ptr;
 }
@@ -300,7 +300,7 @@ CStringList::reverse_iterator::~reverse_iterator()
 
 std::string CStringList::reverse_iterator::operator*()
 {
-	return m_ptr->str;
+	return  m_ptr->str;
 }
 
 Node* CStringList::reverse_iterator::operator->()

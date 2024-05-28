@@ -17,9 +17,9 @@ public:
 	class iterator : public std::iterator<std::input_iterator_tag, Node>
 	{
 	public:
-		typedef iterator self_type;
+		typedef CStringList::iterator self_type;
 		typedef std::string value_type;
-		typedef Node& references;
+		typedef std::string& references;
 		typedef Node* pointer;
 		typedef std::forward_iterator_tag iterator_category;
 		typedef int differneces_type;
@@ -29,8 +29,8 @@ public:
 		iterator(Node* ptr);
 		~iterator();
 
-		std::string operator*();
-		Node* operator->();
+		references operator*();
+		pointer operator->();
 		bool operator==(const iterator& other);
 		bool operator!=(const iterator& other);
 		iterator& operator++();
@@ -41,7 +41,6 @@ public:
 		iterator& operator-=(int value);
 		iterator operator+(int value);
 		iterator operator-(int value);
-		//Дополнить
 
 	private:
 		Node* m_ptr;
