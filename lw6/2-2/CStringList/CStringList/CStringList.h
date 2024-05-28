@@ -17,10 +17,18 @@ public:
 	class iterator : public std::iterator<std::input_iterator_tag, Node>
 	{
 	public:
+		typedef iterator self_type;
+		typedef std::string value_type;
+		typedef Node& references;
+		typedef Node* pointer;
+		typedef std::forward_iterator_tag iterator_category;
+		typedef int differneces_type;
+
 		iterator()
 			: m_ptr{ nullptr } {};
 		iterator(Node* ptr);
 		~iterator();
+
 		std::string operator*();
 		Node* operator->();
 		bool operator==(const iterator& other);
@@ -33,6 +41,7 @@ public:
 		iterator& operator-=(int value);
 		iterator operator+(int value);
 		iterator operator-(int value);
+		//Дополнить
 
 	private:
 		Node* m_ptr;
@@ -57,6 +66,9 @@ public:
 	private:
 		Node* m_ptr;
 	};
+
+	typedef iterator iterator;
+
 	CStringList();
 	CStringList(const CStringList& other);
 	CStringList(CStringList&& other) noexcept;
@@ -66,7 +78,7 @@ public:
 	void AddStrToPos(CStringList::iterator pos, const std::string& str);
 	void RemoveStrInPos(CStringList::iterator pos);
 	int GetCount();
-	bool IsEmpty();
+	bool IsEmpty(); 
 	void Clear();
 
 	std::string operator[](int index);

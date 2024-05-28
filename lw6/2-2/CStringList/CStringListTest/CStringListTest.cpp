@@ -27,6 +27,11 @@ TEST_CASE("Getting iter to begin and end")
 		THEN("Str of iter = First")
 		{
 			CHECK(*iter == "First");
+			iter++;
+			CHECK(*iter == "Second");
+			iter--;
+			CHECK(*iter == "First");
+
 		}
 	}
 
@@ -225,6 +230,23 @@ TEST_CASE("Change element by iterator")
 			CHECK(list[1] == "text");
 			iter->str = "new text";
 			CHECK(list[1] == "new text");
+		}
+	}
+}
+//Тесты STL алгоритмы copy, sort и transform для поиска, min и max
+
+TEST_CASE("STL algs")
+{
+	WHEN("Copy")
+	{
+		CStringList list;
+		list.AddStrToEnd("Some");
+		list.AddStrToEnd("text");
+		std::string result;
+		std::copy(list.begin(), list.end(), [&result](const std::string& str) {result += str; });
+		THEN("Sum of strs")
+		{
+			CHECK(result == "Sometext");
 		}
 	}
 }

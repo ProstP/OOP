@@ -105,6 +105,7 @@ void CStringList::RemoveStrInPos(CStringList::iterator pos)
 	{
 		throw CStringListOutOfRangeError("Position to remove out of range");
 	}
+	//Доделать удаление
 	if (pos == m_firstPtr)
 	{
 		m_firstPtr = pos->next;
@@ -120,8 +121,6 @@ void CStringList::RemoveStrInPos(CStringList::iterator pos)
 	}
 	pos->next = nullptr;
 	pos->prev = nullptr;
-	delete pos->prev;
-	delete pos->next;
 	m_count--;
 }
 
@@ -201,7 +200,6 @@ CStringList::iterator::iterator(Node* ptr)
 CStringList::iterator::~iterator()
 {
 	m_ptr = nullptr;
-	delete m_ptr;
 }
 
 std::string CStringList::iterator::operator*()
@@ -226,7 +224,7 @@ bool CStringList::iterator::operator!=(const iterator& other)
 
 CStringList::iterator& CStringList::iterator::operator++()
 {
-	if (this->m_ptr->next == nullptr)
+	if (m_ptr->next == nullptr)
 	{
 		throw CStringListOutOfRangeError("Can not increament, iterator to last element");
 	}
@@ -237,7 +235,7 @@ CStringList::iterator& CStringList::iterator::operator++()
 CStringList::iterator CStringList::iterator::operator++(int)
 {
 	iterator temp(*this);
-	++temp;
+	++*this;
 	return temp;
 }
 
@@ -264,7 +262,7 @@ CStringList::iterator& CStringList::iterator::operator--()
 CStringList::iterator CStringList::iterator::operator--(int)
 {
 	iterator temp(*this);
-	--temp;
+	--*this;
 	return temp;
 }
 
@@ -298,7 +296,6 @@ CStringList::reverse_iterator::reverse_iterator(Node* ptr)
 CStringList::reverse_iterator::~reverse_iterator()
 {
 	m_ptr = nullptr;
-	delete m_ptr;
 }
 
 std::string CStringList::reverse_iterator::operator*()
