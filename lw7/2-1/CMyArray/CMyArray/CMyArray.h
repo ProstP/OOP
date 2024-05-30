@@ -58,11 +58,11 @@ public:
 		{
 			return m_ptr;
 		};
-		bool operator==(const self_type& other)
+		bool operator==(const self_type& other) const
 		{
 			return m_ptr == other.m_ptr;
 		}
-		bool operator!=(const self_type& other)
+		bool operator!=(const self_type& other) const
 		{
 			return m_ptr != other.m_ptr;
 		}
@@ -118,11 +118,11 @@ public:
 		{
 			return m_ptr;
 		};
-		bool operator==(const self_type& other)
+		bool operator==(const self_type& other) const
 		{
 			return m_ptr == other.m_ptr;
 		}
-		bool operator!=(const self_type& other)
+		bool operator!=(const self_type& other) const
 		{
 			return m_ptr != other.m_ptr;
 		}
