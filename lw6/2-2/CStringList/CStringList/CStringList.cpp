@@ -124,12 +124,12 @@ void CStringList::RemoveStrInPos(CStringList::iterator pos)
 	m_count--;
 }
 
-int CStringList::GetCount()
+int CStringList::GetCount() const
 {
 	return m_count;
 }
 
-bool CStringList::IsEmpty()
+bool CStringList::IsEmpty() const
 {
 	return (m_count == 0);
 }

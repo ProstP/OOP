@@ -76,8 +76,8 @@ public:
 	void AddStrToEnd(const std::string& str);
 	void AddStrToPos(CStringList::iterator pos, const std::string& str);
 	void RemoveStrInPos(CStringList::iterator pos);
-	int GetCount();
-	bool IsEmpty(); 
+	int GetCount() const;
+	bool IsEmpty() const; 
 	void Clear();
 
 	std::string operator[](int index);
