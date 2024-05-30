@@ -277,4 +277,6 @@ TEST_CASE("STL algs")
 			CHECK(*minIter == "9");
 		}
 	}
+
+	//transorm и sort
 }

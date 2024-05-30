@@ -300,6 +300,7 @@ CStringList::reverse_iterator::~reverse_iterator()
 
 std::string CStringList::reverse_iterator::operator*()
 {
+	//проверка
 	return  m_ptr->str;
 }
 

@@ -34,7 +34,7 @@ public:
 		bool operator==(const iterator& other);
 		bool operator!=(const iterator& other);
 		iterator& operator++();
-		iterator operator++(int);
+		iterator operator++(int);//const
 		iterator& operator+=(int value);
 		iterator& operator--();
 		iterator operator--(int);
