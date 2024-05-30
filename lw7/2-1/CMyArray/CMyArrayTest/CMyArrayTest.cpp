@@ -45,7 +45,7 @@ TEST_CASE("With double")
 		}
 	}
 
-	WHEN("Chenge by []")
+	WHEN("Change by []")
 	{
 		CMyArray<double> arr;
 		arr.AddToBack(5);
@@ -197,6 +197,115 @@ TEST_CASE("Move MyArray")
 			CHECK(arr1.GetCount() == 0);
 			CHECK(arr2[0] == 2.001);
 			CHECK(arr2[1] == 10.012);
+		}
+	}
+}
+
+TEST_CASE("Clear")
+{
+	WHEN("Empty")
+	{
+		CMyArray<double> arr;
+		THEN("Stay empty")
+		{
+			CHECK(arr.GetCount() == 0);
+			arr.Clear();
+			CHECK(arr.GetCount() == 0);
+		}
+	}
+
+	WHEN("Not empty")
+	{
+		CMyArray<double> arr;
+		arr.AddToBack(5.002);
+		arr.AddToBack(0);
+		arr.AddToBack(-19);
+		THEN("Will be empty")
+		{
+			CHECK(arr.GetCount() == 3);
+			arr.Clear();
+			CHECK(arr.GetCount() == 0);
+		}
+	}
+}
+
+TEST_CASE("Resize")
+{
+	WHEN("New capacity = curr capacity")
+	{
+		CMyArray<double> arr;
+		arr.AddToBack(5);
+		arr.AddToBack(0);
+		arr.AddToBack(1);
+		THEN("Without change")
+		{
+			CHECK(arr.GetCapacity() == 4);
+			arr.Resize(4);
+			CHECK(arr.GetCapacity() == 4);
+		}
+	}
+
+	WHEN("New capacity > curr capacity")
+	{
+		CMyArray<double> arr;
+		arr.AddToBack(5);
+		arr.AddToBack(0);
+		arr.AddToBack(1);
+		THEN("Without change")
+		{
+			CHECK(arr.GetCapacity() == 4);
+			arr.Resize(10);
+			CHECK(arr.GetCapacity() == 10);
+		}
+	}
+
+	WHEN("New capacity < curr capacity but > count")
+	{
+		CMyArray<double> arr;
+		arr.AddToBack(5);
+		arr.AddToBack(0);
+		arr.AddToBack(1);
+		arr.AddToBack(1);
+		THEN("Without change")
+		{
+			CHECK(arr.GetCapacity() == 8);
+			arr.Resize(6);
+			CHECK(arr.GetCapacity() == 6);
+		}
+	}
+
+
+	WHEN("New capacity < curr capacity but = count")
+	{
+		CMyArray<double> arr;
+		arr.AddToBack(5);
+		arr.AddToBack(0);
+		arr.AddToBack(1);
+		arr.AddToBack(1);
+		THEN("Without change")
+		{
+			CHECK(arr.GetCapacity() == 8);
+			arr.Resize(4);
+			CHECK(arr.GetCapacity() == 4);
+			std::vector<double> vector;
+			std::copy(arr.begin(), arr.end(), std::back_inserter(vector));
+			CHECK(vector[0] == 5);
+			CHECK(vector[1] == 0);
+			CHECK(vector[2] == 1);
+			CHECK(vector[3] == 1);
+		}
+	}
+
+	WHEN("New capacity < curr capacity but < count")
+	{
+		CMyArray<double> arr;
+		arr.AddToBack(5);
+		arr.AddToBack(0);
+		arr.AddToBack(1);
+		arr.AddToBack(1);
+		THEN("Without change")
+		{
+			CHECK_THROWS_AS(arr.Resize(2), std::invalid_argument);
 		}
 	}
 }

@@ -21,7 +21,7 @@ public:
 			m_data[i] = other.m_data[i];
 		}
 	};
-	CMyArray(CMyArray&& other)
+	CMyArray(CMyArray&& other) noexcept
 	{
 		m_data = new T[m_capacity];
 		std::swap(m_capacity, other.m_capacity);
@@ -242,7 +242,7 @@ public:
 		return *this;
 	}
 
-	CMyArray& operator=(CMyArray&& other)
+	CMyArray& operator=(CMyArray&& other) noexcept
 	{
 		if (std::addressof(other) == this)
 		{
