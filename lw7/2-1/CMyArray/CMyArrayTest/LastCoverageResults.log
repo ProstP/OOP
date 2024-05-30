@@ -1,0 +1,21 @@
+[2024-05-30 10:23:31] [info] Start Program:
+Path:"E:\\OOP\\lw7\\2-1\\CMyArray\\x64\\Debug\\CMyArrayTest.exe"
+Arguments:
+Working directory: "E:\\OOP\\lw7\\2-1\\CMyArray\\CMyArrayTest\\"
+Modules: Selected: E:\OOP\lw7\2-1\CMyArray\x64\Debug\CMyArray.exe E:\OOP\lw7\2-1\CMyArray\x64\Debug\CMyArrayTest.exe Excluded: 
+Sources: Selected: E:\OOP\lw7\2-1\CMyArray\CMyArray E:\OOP\lw7\2-1\CMyArray\CMyArray Excluded: 
+Log Level: Normal
+Cover Children: 0
+Aggregate by file: 1
+Continue after C++ exception: 0
+Optimized build support: 0
+Export: binary C:\Users\prost\AppData\Local\Temp\btxtq1xn.quw 
+Input coverage: 
+Unified diff: 
+Excluded line regular expressions: 
+Substitute pdb source paths: 
+
+[2024-05-30 10:23:31] [info] Module: E:\OOP\lw7\2-1\CMyArray\x64\Debug\CMyArrayTest.exe is selected because it matches selected pattern: E:\OOP\lw7\2-1\CMyArray\x64\Debug\CMyArrayTest.exe
+[2024-05-30 10:23:32] [info] ----------------------------------------------------
+[2024-05-30 10:23:32] [info] Coverage binary generated in file: C:\Users\prost\AppData\Local\Temp\btxtq1xn.quw
+[2024-05-30 10:23:32] [info] ----------------------------------------------------

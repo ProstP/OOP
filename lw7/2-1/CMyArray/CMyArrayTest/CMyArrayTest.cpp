@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #define CATCH_CONFIG_MAIN
 #include "../../../../catch.hpp"
-#include "../CMyArray/CMyArray.h"
+#include "../CMyArray/CMyArray.hpp"
 #include <vector>
 
 TEST_CASE("With double")
@@ -167,6 +167,20 @@ TEST_CASE("Copy MyArray")
 			CHECK((arr2.GetCount() - arr1.GetCount() == 1));
 		}
 	}
+
+	WHEN("Self")
+	{
+		CMyArray<double> arr1;
+		arr1.AddToBack(2.001);
+		arr1.AddToBack(10.012);
+		arr1 = arr1;
+		THEN("Without change")
+		{
+			CHECK(arr1.GetCount() == 2);
+			CHECK(arr1[0] == 2.001);
+			CHECK(arr1[1] == 10.012);
+		}
+	}
 }
 
 TEST_CASE("Move MyArray")
@@ -197,6 +211,20 @@ TEST_CASE("Move MyArray")
 			CHECK(arr1.GetCount() == 0);
 			CHECK(arr2[0] == 2.001);
 			CHECK(arr2[1] == 10.012);
+		}
+	}
+
+	WHEN("Self")
+	{
+		CMyArray<double> arr1;
+		arr1.AddToBack(2.001);
+		arr1.AddToBack(10.012);
+		arr1 = std::move(arr1);
+		THEN("Without change")
+		{
+			CHECK(arr1.GetCount() == 2);
+			CHECK(arr1[0] == 2.001);
+			CHECK(arr1[1] == 10.012);
 		}
 	}
 }

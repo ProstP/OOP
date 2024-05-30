@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-#include "CMyArray.h"
+#include "CMyArray.hpp"
 #include <vector>
 
 int main()

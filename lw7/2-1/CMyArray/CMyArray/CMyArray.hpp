@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 template <typename T>
 class CMyArray
@@ -8,7 +9,7 @@ public:
 		: m_count{ 0 }
 		, m_capacity{ 2 }
 	{
-		m_data = new T[m_capacity];
+		m_data = new T[m_capacity]();
 		m_data[m_count] = T();
 	};
 	CMyArray(const CMyArray& other)
