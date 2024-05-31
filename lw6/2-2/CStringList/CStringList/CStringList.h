@@ -14,7 +14,7 @@ struct Node
 class CStringList
 {
 public:
-	class iterator : public std::iterator<std::input_iterator_tag, Node>
+	class iterator : public std::iterator<std::bidirectional_iterator_tag, Node>
 	{
 	public:
 		typedef CStringList::iterator self_type;

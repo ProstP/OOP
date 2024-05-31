@@ -34,7 +34,7 @@ public:
 		delete[] m_data;
 	};
 
-	class iterator : public std::iterator<std::input_iterator_tag, T>
+	class iterator : public std::iterator<std::bidirectional_iterator_tag, T>
 	{
 	public:
 		typedef iterator self_type;
@@ -94,7 +94,7 @@ public:
 		T* m_ptr;
 	};
 
-	class reverse_iterator : public std::iterator<std::input_iterator_tag, T>
+	class reverse_iterator : public std::iterator<std::bidirectional_iterator_tag, T>
 	{
 	public:
 		typedef reverse_iterator self_type;
